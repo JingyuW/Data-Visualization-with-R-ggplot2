@@ -2,3 +2,6 @@
 
 a<-rnorm(100)
 plot(a, xlim = c(-2,2))
+
+b<-runif(100)
+plot(b)
