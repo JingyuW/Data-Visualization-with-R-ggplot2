@@ -1,0 +1,115 @@
+---
+title: "7350 Assignment 3 "
+author: "Jingyu Wang 7701969"
+date: "April 8, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,warning=FALSE}
+library(tidyverse)
+library(here)
+library(MASS)
+```
+
+```{r,warning=FALSE}
+# here()
+bees<-read_csv(here("Assignment 3","cleaned_bees_columns_removed.csv"),
+               col_types = cols())
+
+bees.rare.spe<-bees%>%filter(Species%in%c("sumptuosa","pumila","obliqua","nasonii","montivaga","mesillae","mendica","inurbana","cressonii"))
+```
+
+```{r}
+bees%>%group_by(Genus)%>%summarise(Count = n())%>%
+  ggplot(aes(x=reorder(Genus,Count),y=Count)) +
+  geom_col()+
+  coord_flip()+
+  labs(x ="Genus")
+```
+
+```{r}
+genus_count<-bees%>%count(Genus)%>%
+  filter(n<=200)
+
+species_counts <- bees%>%
+   count(Species)%>%
+  filter(n>=15)%>%filter(n<=30)
+
+bees_new<-bees%>%
+  filter(Species%in%species_counts$Species)%>%
+  filter(Genus%in%genus_count$Genus)
+```
+
+```{r}
+ggplot(data= bees_new, mapping= aes(x=Genus, fill = Gender)) +
+  geom_bar()+
+  theme(axis.text.x=element_text(angle = -45, hjust = 0))
+```
+
+```{r}
+ggplot(data= bees_new, mapping= aes(x=Genus, fill = Species)) +
+  geom_bar()+
+  theme(axis.text.x=element_text(angle = -45, hjust = 0))
+```
+
+# To find the specific habitat for those different species we study
+
+```{r}
+bees.rare.spe%>%group_by(Habitat)%>%
+  summarise(Count = n())%>%drop_na()%>%
+  ggplot(aes(x= reorder(Habitat,Count),y=Count))+
+  geom_col()+
+  coord_flip()+
+  labs(x="Habitat")
+```
+
+```{r}
+habitat_count_f<-bees.rare.spe%>%count(Habitat)%>%drop_na()
+month_f<-bees.rare.spe%>%count(Month)%>%drop_na()
+
+bees_new_f1<-bees.rare.spe%>%
+   filter(Habitat%in%habitat_count_f$Habitat)%>%
+   filter(Month%in%month_f$Month)
+```
+
+```{r}
+ggplot(bees_new_f1, aes(Habitat,fill = Gender)) +
+   geom_bar()+
+   theme(axis.text.x=element_text(angle = -45, hjust = 0))
+```
+
+```{r}
+ggplot(bees_new_f1, aes(Habitat,fill = Species)) +
+   geom_bar()+
+   theme(axis.text.x=element_text(angle = -45, hjust = 0))
+```
+
+```{r}
+ggplot(bees_new_f1, mapping = aes(x=Month, fill = Habitat)) + 
+  geom_bar()+
+  facet_wrap(~ Species, scale = "free_y")+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = -45,hjust = 0))
+```
+
+# Fisher Exact test
+
+## Independency between Habitat and Species
+```{r,warning=FALSE}
+spec<-bees.rare.spe%>%count(Species)
+hab<-bees.rare.spe%>%count(Habitat)
+fisher.matr<-cbind(spec$n,hab$n)
+fisher.test(fisher.matr,simulate.p.value = TRUE, B = 1e5)
+```
+
+## Independency between month and Species
+```{r, warning=FALSE}
+spec<-bees.rare.spe%>%count(Species)
+mont<-bees.rare.spe%>%count(Month)
+fisher.matr<-cbind(spec$n,mont$n)
+fisher.test(fisher.matr,simulate.p.value = TRUE, B = 1e5)
+```
