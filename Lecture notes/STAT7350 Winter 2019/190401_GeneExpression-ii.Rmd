@@ -1,0 +1,220 @@
+---
+title: "190401-geneExpression-ii"
+author: "Aleeza Gerstein"
+date: '2019-04-01'
+output:
+  pdf_document: 
+    latex_engine: xelatex
+header-includes:
+- \usepackage[fontsize=12pt]{scrextend}
+---
+
+# Modeling gene expression with broom: a case study in tidy analysis
+David Robinson: http://varianceexplained.org/r/tidy-genomics-broom/
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(kableExtra)
+```
+
+```{r libraries}
+library(tidyverse)
+library(broom)
+library(here)
+```
+
+# Last class
+
+We looked at the genomic dataset from Bauer *et al.* that looked at gene expression from all genes in the yeast genome across different environmental conditions. We pulled out the genes that had the highest and lowest variation in expression across all conditions and growth rates. 
+
+Today we're going to use `dplyr` with the `broom` package tto fit linear models to each gene-nutrient combination.
+
+We're going to start with the same cleaned_data procedure as last week, adding two additional steps. 
+
+```{r}
+original_data <- read_delim("http://varianceexplained.org/files/Brauer2008_DataSet1.tds", delim = "\t", col_type = cols())
+
+cleaned_data <- original_data %>% 
+  separate(NAME, c("name", "BP", "MF", "systematic_name", "number"), sep = "\\|\\|") %>%
+  mutate_at(c("name", "BP", "MF", "systematic_name"), trimws) %>% 
+  select(-number, -GID, -YORF, -GWEIGHT) %>%
+  gather(sample, expression, G0.05:U0.3) %>%
+  separate(sample, c("nutrient", "rate"), sep = 1, convert = TRUE) %>%
+  mutate(nutrient = recode(nutrient, G = "Glucose", L = "Leucine", 
+                           P = "Phosphate", S = "Sulfate", N = "Ammonia", U = "Uracil")) %>%
+  filter(!is.na(expression), systematic_name != "")
+```
+
+---
+
+# CHALLENGE
+
+Add in comments above that tell you what each row is doing (remember you can use `?function_name` for asssistance!)
+
+---
+
+```{r}
+cleaned_data <- read_delim("http://varianceexplained.org/files/Brauer2008_DataSet1.tds", delim = "\t", col_type = cols()) %>%
+  #  separate the NAME column into five different parts
+  separate(NAME, c("name", "BP", "MF", "systematic_name", "number"), sep = "\\|\\|") %>%
+  #  trim the extra white-space from around the new columns
+  mutate_at(c("name", "BP", "MF", "systematic_name"), trimws) %>% 
+  #  remove the unnecssary columns
+  select(-number, -GID, -YORF, -GWEIGHT) %>%
+  #  make the tibble long instead of wide (and recover the information coded in the header)
+  gather(sample, expression, G0.05:U0.3) %>%
+  #  separate the nutrient and rate information into two columns
+  separate(sample, c("nutrient", "rate"), sep = 1, convert = TRUE) %>%
+  #  recode the nutrients to be the full nutrient instead of single letter abbreviation
+    mutate(nutrient = recode(nutrient, G = "Glucose", L = "Leucine", P = "Phosphate", S = "Sulfate", N = "Ammonia", U = "Uracil")) %>%
+  #  remove all rows that have NA for expression or don't have a systematic name listed
+  filter(!is.na(expression), systematic_name != "")
+```
+
+Tidying the data this way let's us use `ggplot` to plot the data in an efficient manner. e.g.,
+
+```{r}
+cleaned_data %>%
+  filter(BP == "leucine biosynthesis") %>%
+  ggplot(aes(rate, expression, color = nutrient)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~name + systematic_name)
+```
+
+We haven't talked about writing functions this semester, but this is going to be the style of graph we're going to use all class, so we'll turn this into a function.
+
+```{r}
+plot_expression_data <- function(expression_data, ncol = 4, fixScales = FALSE) {
+  ggplot(expression_data, aes(rate, expression, color = nutrient)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    {if(fixScales)
+     scale_y_continuous(limits = c(-8, 8), breaks = seq(-8, 8, by=4))} +
+    facet_wrap(~name + systematic_name, ncol = ncol) +
+    theme(strip.text = element_text(size=8), strip.background = element_rect(fill = "white"))
+}
+```
+
+We can then call the graph using these commands:
+
+```{r}
+cleaned_data %>%
+  filter(BP == "leucine biosynthesis") %>%
+  plot_expression_data(fixScales = FALSE)
+```
+
+So that works fairly well to visualize our data when there are a few genes ... what about when there are more?
+
+```{r, fig.height = 10}
+cleaned_data %>%
+  filter(BP == "cell wall organization and biogenesis") %>%
+  plot_expression_data()
+```
+
+This is probably where we reach the limit of what exploratory data visualization can do for us. It's time to us a model to explore the data futher (remember, there are almost 6000 genes!)
+
+# Linear Regression 
+
+Look at a single gene:
+
+```{r}
+LEU1_leucine <- cleaned_data %>%
+  filter(name == "LEU1", nutrient == "Leucine")
+
+ggplot(LEU1_leucine, aes(rate, expression)) +
+  geom_point()
+  
+mod <- lm(expression ~ rate, LEU1_leucine)
+summary(mod)
+```
+
+The goal is to look at every gene/nutrient combination, and we can't collect 'tidy' output using `lm` in this way.
+
+Enter `broom`, which is purposefully designed to turn model objects into data frames, so we can continue to use the tidy tools.
+
+```{r}
+library(broom)
+tidy(mod)
+```
+
+This provides the same slope estimate, standard error, t-statistic and p-value for each coefficient as we previously recovered with `coef(summary(mod))`. But now it’s in a data frame and the rownames have been moved into a column of the data frame. 
+
+This lets us combine multiple models, which in turn lets us perform the modeling within a do statement.
+
+```{r}
+linear_models <- cleaned_data %>%
+  group_by(name, systematic_name, nutrient) %>%
+  do(tidy(lm(expression ~ rate, .)))
+
+linear_models
+```
+
+## Look at the intercept terms
+
+This tell us how much (or little) a gene is expressed when there is none of the focal nutrient present in the environment.
+
+```{r}
+intercept_terms <- linear_models %>%
+  ungroup() %>% 
+  filter(term == "(Intercept)")
+
+intercept_terms
+```
+
+FYI [what does `ungroup` do?](https://community.rstudio.com/t/is-ungroup-recommended-after-every-group-by/5296/4)
+
+We can use this to compare among the different nutrients in a systematic way.
+
+```{r}
+meanLEU <- mean(filter(intercept_terms, name == "LEU1")$estimate)
+
+cleaned_data %>%
+  filter(name == "LEU1") %>%
+  plot_expression_data() +
+  geom_hline(yintercept = meanLEU, linetype="dashed", color = "black")
+```
+
+Let's use this framework to find other genes that have a strong response in one nutrient environment compared to others. We'll do this by centeringn the intercepts around the average for each gene:
+ 
+```{r}
+top_intercepts <- intercept_terms %>%
+  group_by(systematic_name) %>%
+  mutate(centered_intercept = estimate - mean(estimate)) %>%
+  ungroup() %>% 
+  top_n(20)
+``` 
+
+```{r}
+cleaned_data %>%
+  semi_join(top_intercepts, by = "systematic_name") %>%
+  plot_expression_data(fixScales = FALSE)
+```
+
+
+## Slope terms
+
+This tells us how much growth rate influences gene expression.
+
+```{r}
+slope_terms <- linear_models %>%
+  ungroup() %>%
+  filter(term == "rate", !is.na(p.value))
+
+slope_terms
+```
+Let's use the p-values (in this case it makes sense to look at them, previously whether or not the intercept was significnat did not have biological significance) and filter for genes that show a disparity in rate among nutrients.
+
+```{r, fig.height = 8}
+diff_direction_genes <- slope_terms %>%
+    filter(p.value < 0.005) %>%
+    group_by(systematic_name) %>%
+    filter(any(estimate > 5) & any(estimate < -5))
+```
+
+```{r}
+cleaned_data %>%
+    semi_join(diff_direction_genes, by = "systematic_name") %>%
+    plot_expression_data(fixScales = FALSE)
+```

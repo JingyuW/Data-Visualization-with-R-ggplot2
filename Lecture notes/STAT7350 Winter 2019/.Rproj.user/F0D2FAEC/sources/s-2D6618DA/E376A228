@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1552587246646.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1491911507",
+    "id" : "E376A228",
+    "lastKnownWriteTime" : 1552678955,
+    "last_content_update" : 1552678955663,
+    "path" : "C:/Users/summe/Downloads/STAT7350 Winter 2019/notes 2.R",
+    "project_path" : "notes 2.R",
+    "properties" : {
+        "cursorPosition" : "9,21",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : true,
+    "source_window" : "",
+    "type" : "r_source"
+}

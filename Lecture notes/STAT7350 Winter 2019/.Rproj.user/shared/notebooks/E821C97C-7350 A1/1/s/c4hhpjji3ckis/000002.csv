@@ -1,0 +1,13 @@
+"0","library(tidyverse)"
+"0","library(gridExtra)"
+"0","# Invasion threat for 124 countries"
+"0","inv.threat<-read_csv(""/Users/summe/Downloads/Stat-7350-class/Assignment 1/Data/table_1.csv"")"
+"2","Parsed with column specification:
+cols(
+  rank = [32mcol_double()[39m,
+  country = [31mcol_character()[39m,
+  invasion_threat = [32mcol_double()[39m
+)
+"
+"0","ggplot(inv.threat,aes(invasion_threat)) +"
+"0","  geom_histogram(binwidth = 0.01)"

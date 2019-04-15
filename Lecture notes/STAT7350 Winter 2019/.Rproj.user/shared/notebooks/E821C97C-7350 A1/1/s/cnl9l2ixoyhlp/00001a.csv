@@ -1,0 +1,5 @@
+"0","inv.cost %>% "
+"0","  filter(invasion_cost<1e+09)%>%"
+"0","  ggplot(aes(x = invasion_threat,"
+"0","             y = invasion_cost))+"
+"0","  geom_boxplot()"

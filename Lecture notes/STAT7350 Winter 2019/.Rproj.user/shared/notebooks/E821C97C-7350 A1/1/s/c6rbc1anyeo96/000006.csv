@@ -1,0 +1,2 @@
+"0","# The following plot is hard to show in the PDF file"
+"0","#ggplot(tot.cost,aes(log(invasion_cost),fill = country)) + geom_histogram()"

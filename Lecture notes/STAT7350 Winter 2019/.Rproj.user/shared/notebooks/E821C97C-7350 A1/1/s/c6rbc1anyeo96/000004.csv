@@ -1,0 +1,1 @@
+"0","ggplot(tot.cost,aes(log(invasion_cost))) + geom_histogram(binwidth = 0.1)"

@@ -1,0 +1,5 @@
+"0","cost.gdp<-merge(tot.cost[,1:2],GDP[,3:4])"
+"0","ggplot(data = cost.gdp, "
+"0","       mapping = aes(x = log(invasion_cost),"
+"0","                     y = gdp_proportion)) + "
+"0","  geom_point()+geom_smooth(method = ""lm"")"

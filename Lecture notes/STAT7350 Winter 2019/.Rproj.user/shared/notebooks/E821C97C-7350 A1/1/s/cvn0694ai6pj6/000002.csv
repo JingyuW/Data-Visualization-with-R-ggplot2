@@ -1,0 +1,5 @@
+"0","inv.cost<-merge(inv.threat[,2:3],tot.cost[,1:2])"
+"0","ggplot(data = inv.cost, "
+"0","       mapping = aes(x = invasion_threat,"
+"0","                     y = log(invasion_cost)))+"
+"0","  geom_point()"

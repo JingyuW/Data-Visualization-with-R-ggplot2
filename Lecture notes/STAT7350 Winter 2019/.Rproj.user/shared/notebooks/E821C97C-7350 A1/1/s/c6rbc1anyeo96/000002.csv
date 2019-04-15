@@ -1,0 +1,11 @@
+"0","# Invasion cost for 124 countries"
+"0","tot.cost<-read_csv(""/Users/summe/Downloads/Stat-7350-class/Assignment 1/Data/table_2.csv"")"
+"2","Parsed with column specification:
+cols(
+  country = [31mcol_character()[39m,
+  invasion_cost = [32mcol_double()[39m,
+  rank = [32mcol_double()[39m,
+  inv_cost_millions = [32mcol_double()[39m
+)
+"
+"0","ggplot(tot.cost,aes(invasion_cost)) + geom_histogram()"

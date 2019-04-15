@@ -1,0 +1,3 @@
+"0","ggplot(data = inv.cost,"
+"0","       mapping = aes(x =invasion_threat, y ="
+"0","                       invasion_cost)) +geom_boxplot()"

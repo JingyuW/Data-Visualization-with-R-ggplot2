@@ -1,0 +1,2 @@
+"0","ggplot(inv.cost ,aes(x = invasion_threat,y = log(invasion_cost)))+"
+"0","  geom_point()+geom_smooth(method = ""loess"", span = 0.4)"

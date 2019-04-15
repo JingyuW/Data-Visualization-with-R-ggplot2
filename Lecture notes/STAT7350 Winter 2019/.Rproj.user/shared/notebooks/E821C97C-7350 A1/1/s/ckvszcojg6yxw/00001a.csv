@@ -1,0 +1,4 @@
+"0","ggplot(data = cost.gdp, "
+"0","       mapping = aes(x = log(invasion_cost),"
+"0","                     y = log(gdp_mean))) + "
+"0","  geom_point()+geom_smooth(method = ""lm"")"

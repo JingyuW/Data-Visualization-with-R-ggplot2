@@ -1,0 +1,4 @@
+"0","inv.cost %>% "
+"0","  filter(invasion_cost<2e+09)%>%"
+"0","  ggplot(aes(x = invasion_threat,y = log(invasion_cost)))+"
+"0","  geom_point()+geom_smooth()"

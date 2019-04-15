@@ -1,0 +1,907 @@
+---
+title:  |
+  | \vspace{5cm} \LARGE{Ratio Estimators Based on Ranked Set Sampling}
+author: "Jingyu Wang"
+date: "`r Sys.Date()`"
+header-includes: \usepackage{setspace}\onehalfspacing
+output:
+  pdf_document:
+    toc_depth: 2
+bibliography: reference.bib
+---
+
+\newpage
+\tableofcontents 
+\newpage
+
+# 1. An overview of Ranked Set Sampling 
+
+Ranked Set Sampling (RSS) is a sampling technique which is used to collect sample data and measure observations by building more structure to dataset. It is one way of data collection which could be more efficient, more precise and less costly than the Simple Random Sampling (SRS) under many situations,e.g @RSS_2004, @RSS_inference_2012.
+
+In SRS, samples are randomly seclected from the underlying population. However, there is no guarantee that since random samples will provide a representative sample from the population. To obtain more representating samples from the population without increasing the sample size anrd associated sampling cost several other statistical sampling methods are proposed in the literature. 
+
+Ranked set sampling(RSS) was first proposed by @Using_Ranked_Set_1952 to estimate the yiels of pastures. RSS is a kind of data collection mechanism which is based on the order statistics and easy to obtain rank information the idea is to rank sampling units on the basis of the attribute of interest and use the rank information to obtain better samples from the population and raise efficiency for our design. To be able to use RSS on needs to assume samples could be easily ranked without actural measurement, e.g. visual comparisons and so on.
+
+As we describe below RSS makes use of additional rank information based on the basic properties of simple random samples from the population. It also provides more structures to measure data and makes the selected observations more representative than SRS data of the same size (e.g., @RSS_Theory_2004, and @RSS_2004).
+
+Now, we provided the explaination of collecting data by using RSS. Samples of size $k$ are selected randomly from the population and ranking them without actual measurement, then pick the first one as $X_{[1]}$. We select another sample set of size $k$ again, and pick the second element after ranking to get $X_{[2]}$. After k times, $k$ elements will be collected and denoted by $X_{[1]},\dots,X_{[k]}$. If we indicate all elements in $i^{th}$ rank as unit, then let $n_{r}$ is the number of observations in each unit with rank $r$, $r=1,\cdots,k$. Table 1 is described the balanced RSS where $n_{1},\dots,n_{k}$, which means the size of each row, $i^{th}$ judgment order statistic, are same. 
+
+\hspace{8cm}{table 1}
+
+| | | | |
+|-|-|-|-|
+$X_{[1]1}$ | $X_{[1]2}$ | $...$ | $X_{[1]n_1}$
+$X_{[2]1}$ | $X_{[2]2}$ | $...$ | $X_{[2]n_2}$
+\vdots     | \vdots     | \vdots| \vdots     
+$X_{[k]1}$ | $X_{[k]2}$ | $...$ |$X_{[k]n_k}$
+
+However, it is called unbalanced RSS if the number of elements in each unit are different. In general, we use the following Table 2 to represent an unbalanced ranked-set sample.
+
+\hspace{8cm}{table 2}
+
+| | | | |
+|-|-|-|-|
+$X_{(r_{1}: k_{1}1}$ |$X_{(r_{1}:k_{1})2}$ |$\dots$ |$X_{(r_{1}:k_{1})n_1}$
+$X_{(r_{2}:k_{2})1}$ |$X_{(r_{2}:k_{2})2}$ |$\dots$ |$X_{(r_{2}:k_{2})n_2}$
+\vdots     |\vdots     |\vdots  |\vdots     
+$X_{(r_{m}:k_{m})1}$ |$X_{(r_{m}:k_{m})2}$ |$\dots$ |$X_{(r_{m}:k_{m})n_m}$
+
+For Table 2, $(r_{i},k_{i}) \neq (r_{l},k_{l})$ if $i \neq l$, and $X_{(r_{i}:k_{i})j}$, $j=1,...,n_{i}$ is the $r_{i}$th order statistic in a simple random sample(set) of size from the population. Also, the empirical distribution function of an unbalanced ranked set sample is defined as 
+
+$$ 
+\begin{aligned}
+\hat{F}_{q_{n}}(x) &= \frac{1}{n}\sum_{r=1}^{k}\sum_{j=1}^{n_{r}}I\{X_{(r)j}\leq x\}\\
+&=\frac{1}{n}\sum_{r=1}^{k}n_{r}\frac{1}{n_{r}}\sum_{j=1}^{n_{r}}I\{X_{(r)j}\leq x\}\\
+&=\sum_{r=1}^{k}q_{nr}\hat{F}_{(r)}(x)
+\end{aligned}
+$$
+where $q_{nr}={n_{r}}/{n}$, $q_{n} = (q_{n1},...,q_{nk})^\top$ and $\hat{F}_{(r)}(x)= \frac{1}{n_{r}}\sum_{j=1}^{n_{r}}I\{X_{(r)j}\leq x\}$ is the EDF of the $r^{th}$ order statistic based on a sample $X_{(r)1},\dots,X_{(r)n_{r}}$, $r=1,\dots,k$.
+
+We denote $X_{(r)j}$ from the samllest to the largest by $Z_{n:1}\leq Z_{n:2}\leq \dots \leq Z_{n:n}$. The $Z_{n:i}$, $i=1,\dots,n$, are referred to as the unbalanced raked-set order statistics.
+
+Also, for $0\leq p\leq 1$, the $p^{th}$ unbalanced ranked-set sample quantile is defined as 
+$$x_{q_{n}}(p)=inf\{ x: \hat{F}_{q_{n}}(x)\geq p\}$$
+
+In addition, we cannot make sure whether the rth order statistics, $X_{[r]}$, the sample we picked is the rth samllest order statisitcs in $k$ samples from $k^2$ samples. For example, in one single cycle, the smallest element ($X_{[1]}$) is collected from the first sample set with size $k$, the second smallest element ($X_{[2]}$) is selected from the second sample set with size $k$, but we cannot claim that $X_{[1]}$ is the smallest order statistics in the $k$ samples after collection of $k^2$ samples. Thus, $X_{[r]}$ is used for imperfect ranking which the ranks is not exactly the rank in $N$ samples, otherwise it is perfect ranking as $X_{(r)}$. 
+
+There are a few examples how RSS be used to solve the real problems. One example is the application of RSS on medical studies, which is used to measure the normal range of medical measures wihtout actual expensive measurement. For example, the RSS technique could be used to determine the normal range of bilirubin levels in the newborn baby's blood. Firstly, we observe whether the terminal parts, like their faces, are pale yellow by using visual comparison. Ranking is based on the result of observations because it is increasing in bilirubin levels if face appears yellow. Using visual comparison or other derict methods can reduce the cost of the experiment. For more details, see @Medicial_study_1999.
+
+RSS technique is also use for evaluation of the status of hazard waste sites. Firstly, we can sort the samples through photos, records, and other physical features. For instant, the color of leaves and soil in a contaminated site will be changed. @Regression_estimator_1997 made similar surveys by using RSS and concomitant variables and shows that RSS is more efficient than SRS.
+
+# 2. How to get samples by using RSS (Perfect Ranking)
+
+To understand the RSS technique and see how it works for the populations of interest, the description will be shown as following.Assume that the ranking is perfect:
+
+Step 1: Rondomly selecte samples of size $k$ from the population denoted $X_{1},\dots,X_{k}$.
+
+Step 2: Order all of $k$ samples by attribute of interest without actual measurement on them. This can be done using visual inspection, expert knowledge, etc.
+
+Step 3: Pick the first one (the smalleest one)and denote by $X_{[1]}$. Also, we remain other units in the sample set because the only purpose of these units is to find the element for measurement with smaller attribute values.
+
+Also, $X_{[1]}$ is used here instead of $X_{(1)}$ for the smallesr order statistics because it is only the samllest judgement ordered item. It means that we are not sure whether it is actually the smallest one in the set as ranking is not perfected. 
+
+Next, we repeat steps 1 to 3 such that $k$ samples will be selected randomly from population again and order them by the attrbute of interest. Then, picking the second one(the second smallest sample), denoted by $X_{[2]}$ which is the second smallesr judgement oedered item. 
+
+Repeating Steps 1 to 3 $k$ times and we get $k$ elements from $k^2$ sample units, denoted by $X_{[1]},X_{[2]},\dots,X_{[k]}$. The k elements in each entire process is called set size. If the whole process is looked as a cycle, then run this cycle m independent times. In the end, the new sample set with size $n=km$ are selected and able to measure in design, named by $X_{[1]j},X_{[2]j},\dots,X_{[k]j}$ for $j=1,2,\dots,m$. Note that this is a balanced RSS and it could be expressed in one table, shown as Table 3.
+
+\begin{table}
+\centering
+\caption{}
+\label{Table 3}
+\smallskip
+\begin{tabular}{p{3cm} p{2.5cm} p{2.5cm} p{2.5cm} p{2.5cm} p{2.5cm}}
+\hline\\
+Cycle 1 &$X_{[1]1}$ &$X_{[2]1}$ &$X_{[3]1}$ &$...$ &$X_{[k]1}$\\[1ex]
+Cycle 2 &$X_{[1]2}$ &$X_{[2]2}$ &$X_{[3]2}$ &$...$ &$X_{[k]2}$\\[1ex]
+.       &.          &.          &.          &.     &.         \\[0ex]
+.       &.          &.          &.          &.     &.         \\[0ex]
+.       &.          &.          &.          &.     &.         \\[1ex]
+Cycle m &$X_{[1]m}$ &$X_{[2]m}$ &$X_{[3]m}$ &$...$ &$X_{[k]m}$\\[1ex]
+\hline
+\end{tabular}
+\end{table}
+
+# 3. Some properties of RSS
+
+As mentioned in the overview of RSS, RSS artificially stratifies the population based on ranks, and the theory of RSS depends on the theory of order statistics. We first overview some key properties of order statistics. 
+
+**Recall**: *Suppose that the ditribution of continuous with density $f(x)$. For $k=1, 2, ..., n$, the density of $X_{(k)}$ is given by*
+
+$$f_{X_{(k)}}(x)=\frac{\Gamma(n+1)}{\Gamma(k)\Gamma(n+1-k)}(F(x))^{k-1}[1-F(x)]^{n-k}f(x),$$
+*that is,*
+$$f_{X_{(k)}}(x)= f_{\beta(k,n+1-k)}(F(x))\cdot f(x).$$
+*Remark*: For $k=1$ and $k=n$, we redixcover, the familiar expressions for the distribution functions and density functions of the smallest and largest values. For more detail see @mathematic_statistics_2009, @RSS_Theory_2004 and @order_statistics_2005. 
+
+Next, there are some properties of RSS are important.  
+
+**Theorem 1**: If $f_{[r]}=f_{(r)}$, the density function of the rth order statistics of k random samples from distribution F, then 
+
+$$f_{(r)}(x)=\frac{k!}{(r-1)!(k-r)!}F^{r-1}(x)[1-F(x)]^{k-r}f(x)$$
+Then, we have $f(x)=\frac{1}{k}\sum_{r=1}^kf_{(r)}(x)$ for all $x$. 
+
+Proof: To show this theorem, we start from the right side:
+
+$$
+\begin{aligned}
+\frac{1}{k}\sum_{r=1}^kf_{(r)}(x)  &=\frac{1}{k}\sum_{r=1}^k\frac{k!}{(r-1)!(k-r)!}F^{r-1}(x)[1-F(x)]^{k-r}f(x)\\
+&=f(x)\sum_{r=1}^k(_{r-1}^{k-1})F^{r-1}(x)[1-F(x)]^{k-r}\\
+&=f(x)\sum_{r=1}^kP(Y=r)\\
+&=f(x)
+\end{aligned}
+$$
+where $Y$~$Bin(k,F(x))$ and $\sum_{r=1}^kP(Y=r)=1$. 
+
+To better understand how RSS sreate artificial stratificate of the underlying population during the sampling process, consider a $N(0,1)$ population with the following plot 1:
+$$f(x)= \frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}$$
+```{r}
+x=seq(-4,4,length=100)
+plot(x,dnorm(x,0,1),
+     sub=paste("Plot of a normal density and its corresponding order statistics distributions"),
+     type="l",
+     ylab="",
+     lwd=2,
+     col="black")
+
+```
+When set size is $k=4$, $f(x)=\frac{1}{4}\sum_{r=1}^4f_{(r)}(x)$. Consider a $N(0,1)$ as a mixture of 4 subpopulation associated with distribution of order statistics of $N(0,1)$ in sample of size $k$. 
+
+```{r}
+
+k<-4  #Set size
+
+order.density<-function(x, r, k){  #PDF of order statistics of a standard normal 
+  y<-factorial(k)/factorial(r-1)/factorial(k-r)*dnorm(x,0,1)*
+    (pnorm(x, 0,1))^(r-1)*(pnorm(x,0,1,lower.tail=FALSE))^(k-r)
+  return(y)
+}
+
+x=seq(-4,4,length=100)
+
+plot(x,dnorm(x,0,1),
+     xlab = "",
+     sub=paste("Plot of a normal density and its corresponding order \nstatistics distributions scaled by afactor of 1/k"),
+     type="l",
+     ylab="",
+     lwd=2,
+     col="black")
+
+for(r in 1:k){
+    lines(x, 1/k*order.density(x, r, k), type="l")
+}
+
+```
+As we know, there two stages in general procedure of RSS. In the first step, the samples by using SRS are ranked by ranking mechanism. The second step is doing actual measurement of the unit of variables of interest based on the first step. A ranking mechanism is given by the judgment ranking about the latent values of the variable of interest, and the original ranking mechanism was considered by @Using_Ranked_Set_1952. 
+
+**Property 1**: *A ranking mechanism is said to be consistant if we have*
+
+$$F(x)=\frac{1}{k}\sum_{r=1}^kF_{[r]}(x),\quad for\ all\ x$$
+*where $F_{[r]}(x)$ id the CDF of the $r^{th}$ order statisitcs in a set of size $k$ from $F$.* Also, the latent values of $x$ for perfect ranking is consistent.
+
+Now, let $h(x)$ be any function of $x$ and denote that $\mu_{h}$ is the expected value of $h(x)$ such that $E(h(X))=\mu_{h}$. $h(x)$ could be: (a) the estimation of population moments, $h(x)=x^l$, $l=1,2,\dots$ (b)the estimation of distribution function, $h(x)=I\{x\leq c\}$ where $I\{\cdot\}$ is the usual indicator function (c)the estimation of density function, $h(x)=\frac{1}{\lambda}K(\frac{t-x}{\lambda})$ where K is a given function and $\lambda$ is a given constant.
+
+Then, the moment estimator of $\mu_{h}$ by using RSS and SRS are given, 
+$$\hat\mu_{h\cdot RSS}=\frac{1}{mk}\sum_{r=1}^k\sum_{i=1}^mh(X_{[r]i})$$
+$$\hat\mu_{h\cdot SRS}=\frac{1}{mk}\sum_{l=1}^{n}h(X_{l})=\frac{1}{mk}\sum_{r=1}^k\sum_{i=1}^mh(X_{ri})$$
+where we rewrite $X_{1},\dots,X_{km}$ in a matrix form $X_{ri}$, $r=1,\dots,k$, $i=1,\dots,n$. Then, we have the following theorem. 
+
+**Theorem 2**: *Suppose that the ranking in RSS is consistent. Then,* 
+
+*(i)The estimator $\hat{\mu}_{h.RSS}$ is unbiased, i.e., $E_{\hat{\mu}_{h.RSS}}= \mu_h$.*
+
+*(ii)$Var({\hat{\mu}_{h.RSS}})\leq \frac{\sigma^2_{h}}{mk}$, where $\sigma^2_{h}$ denotes the variance of $h(X)$, and the inequality is strict unless the ranking mechanism is purely random. *
+
+*(iii)As $m \rightarrow \infty$,
+$$\sqrt{mk}(\hat{\mu}_{h.RSS}-\mu_h)\rightarrow N(0,\sigma^2_{h,RSS})$$
+in distribution, where, 
+$$\sigma^2_{h,RSS}=\frac{1}{k}\sum_{r=1}^k\sigma^2_{h[r]}$$
+Here $\sigma^2_{h[r]}$ denotes the variance of $h(X_{[r]i})$. *
+
+Proof: (i) Consider a simple random sample size $k$ from a population with mean $\mu$ and variance $\sigma^2 >0$. We assume perfect ranking for RSS.
+
+The expected value of $\hat\mu_{h\cdot RSS}$ isnow given by:
+$$
+\begin{aligned}
+E[\hat\mu_{h\cdot RSS}]  &= \frac{1}{mk}E[\sum_{r=1}^k\sum_{i=1}^mh(X_{[r]i})]=
+\frac{1}{k}\sum_{i=1}^kE[h(X_{[r]1})]\\
+              &= \frac{1}{k}\sum_{i=1}^k\int_{-\infty}^{\infty}h(x)dF_{[r]}(x)= \int_{-\infty}^{\infty}h(x)d\frac{1}{k}\sum_{r=1}^kF_{[r]}(x) \\
+              &=\int_{-\infty}^{\infty}h(x)dF(x)=\mu_{h}\\
+\end{aligned}
+$$
+where $X_{[r]i}$ is $r^{th}$ judgment order statistics in $i^{th}$ cycle, $r=1,\dots,k$ and $i=1,\dots,m$, and $f_{[r]}$ and $F_{[r]}$ are the density function and the distribution function of $X_{[r]i}$, respectively. Also, $X_{[r]i}$ is identicially distributed in same row. Thus, $\hat\mu_{h\cdot RSS}$ is unbiased estimator of the population mean $\mu_{h}$.
+
+Note that $\hat\mu_{h\cdot SRS}$ is also unbiased estimator of the population mean $\mu_{h}$.Since $E[\hat\mu_{h\cdot SRS}]=\frac{1}{mk}\sum_{r=1}^k\sum_{i=1}^mE[h(X_{ri}]=\frac{1}{mk}mk\int_{-\infty}^{\infty}h(x)dF(x)=\mu_{h}$. 
+
+(ii) The variance of $\hat\mu_{h\cdot RSS}$ is 
+$$
+\begin{aligned}
+Var(\hat\mu_{h\cdot RSS})&=\frac{1}{(mk)^2}\sum_{r=1}^k\sum_{i=1}^mVar(h(X_{[r]i})) = \frac{1}{mk^2}\sum_{r=1}^kVar(h(X_{[r]}))\\
+&=\frac{1}{mk}(\frac{1}{k}\sum_{r=1}^k(E[h(X_{[r]})]^2-[E(h(X_{[r]}))]^2))\\
+&=\frac{1}{mk}(m_{h2}-\frac{1}{k}\sum_{r=1}^k[E(h(X_{[r]}))]^2)\\
+&\leq\frac{1}{mk}(m_{h2}-\mu_{h}^2)=\frac{\sigma_{h}^2}{mk}
+\end{aligned}
+$$
+where $m_{h2}$ denotes the $2^{nd}$ moment of $h(x)$. The Caushy-Schwarz inequality also gives that $\frac{1}{k}\sum_{r=1}^k[E(h(X_{[r]}))]^2\geq (\frac{1}{k}\sum_{r=1}^kE[h(X_{[r]})])^2=\mu_{h}^2$ where the equality only happens when $E[h(X_{[1]})]=\dots=E[h(X_{[r]})]$ in the ranking mechanism is purely random. Remark that, the variance of $\hat\mu_{h\cdot SRS}$ is $\frac{\sigma_{h}^2}{mk}$.
+
+(iii) If we have $\mu_{h}=\frac{1}{k}\sum_{r=1}^k\mu_{h[r]}$, where $\mu_{h[r]}$ is the ecpection of $h(X_{[r]i})$ and $\hat{\mu}_{h.RSS}=\frac{1}{mk}\sum_{r=1}^k\sum_{i=1}^mh(X_{[r]i})$. Then, 
+
+$$
+\begin{aligned}
+\sqrt{mk}(\hat{\mu}_{h.RSS}-\mu_h) &=\frac{1}{\sqrt{mk}}\sum_{r=1}^k\sum_{i=1}^mh(X_{[r]i})-\sqrt{\frac{m}{k}}\sum_{r=1}^k\mu_{h[r]}\\
+&=\frac{1}{\sqrt{k}}\sum_{r=1}^k(\frac{1}{\sqrt{m}}\sum_{i=1}^mh(X_{[r]i})-\sqrt{m}\sum_{r=1}^k\mu_{h[r]})\\
+&=\frac{1}{\sqrt{k}}\sum_{r=1}^k\sqrt{m}[\frac{1}{m}\sum_{i=1}^mh(X_{[r]i})-\mu_{h[r]}]\\
+&=\frac{1}{\sqrt{k}}\sum_{r=1}^kZ_{mr}
+\end{aligned}
+$$
+By the multivariate central limit theorem, ($Z_{m1},Z_{m2},...,Z_{mk}$)approcimately follows a multivariate normal distribution with mean $\overrightarrow{0}$ and covariance matrix $\text{Diag}(\sigma^2_{h[1]},\sigma^2_{h[2]},...,\sigma^2_{h[k]})$ when $m$ goes to infinity.    
+
+# 4. Comparing for RSS and SRS
+
+```{r}
+#Draw a n=m*k samples from a population using RSS.
+set.seed(2018)
+set.size<-3 #This is k
+cycle.size<-10 #This is m
+
+rss.sample<-function(cycle.size, set.size, rgen=runif,...)
+{
+  x<-matrix(NA,cycle.size,set.size)
+  for(i in 1:cycle.size){
+    for(j in 1:set.size){
+      y<-rgen(n=set.size,...)
+      y<-sort(y)
+      x[i,j]<-y[j]
+    }
+  }
+  return(x)
+} 
+rss.sample(cycle.size,set.size,rgen=rnorm,mean=0,sd=1)
+```
+
+```{r}
+#Repeating this procedure 1000 times
+sim.dist<-function(cycle.size, set.size, n.sim=1000, gen=runif,...)
+{
+  Xbar.RSS<-matrix(NA,10,100)
+  for(r in 1:n.sim){
+    y<-rss.sample(cycle.size, set.size, rgen=gen,...)
+    Xbar.RSS[r]<-mean(y)
+  }
+  return(Xbar.RSS)
+}
+
+rss.data<-sim.dist(cycle.size,set.size,n.sim=1000, gen=rnorm,mean=0,sd=1)
+```
+
+```{r}
+#Histgram of data by using RSS
+hist(rss.data, 
+     probability = TRUE, 
+     main = "Histgram of data by using ranked set sampling",
+     xlab = "",
+     ylab = "",
+     xlim = c(-0.5,0.4),
+     ylim = c(0,3.0))
+lines(density(rss.data),lwd=2,col="red")
+Xrss.bar<-mean(rss.data)
+abline(v=Xrss.bar,col='blue')
+text(Xrss.bar,0,paste('Xrss.bar =',round(Xrss.bar,3)))
+```
+
+```{r}
+#Selecting data by using Simple Random Sample and Repeat 1000 times
+sim.dist<-function(cycle.size, set.size, n.sim=1000, gen=runif,...)
+{
+  Xbar.SRS<-matrix(NA,10,100)
+  for(r in 1:n.sim){
+    n<-set.size*cycle.size
+    rnorm(n,0,1)
+    srs.sample<-matrix(c(rnorm(n,0,1)),cycle.size,set.size)
+    #y<-srs.sample
+    Xbar.SRS[r]<-mean(srs.sample)
+  }
+  return(Xbar.SRS)
+}
+srs.data<-sim.dist(cycle.size,set.size,n.sim=1000, gen=rnorm,mean=0,sd=1)
+```
+
+```{r}
+#Histgram of data by using SRS
+hist(srs.data, 
+     probability = TRUE, 
+     main = "Histgram of data by using simple random sampling",
+     xlab = "",
+     ylab = "",
+     xlim = c(-0.7,0.7),
+     ylim = c(0,2.5))
+lines(density(srs.data),lwd=2,col="red")
+Xsrs.bar<-mean(srs.data)
+abline(v=Xsrs.bar,col='blue')
+text(Xsrs.bar,0,paste('Xsrs.bar =',round(Xsrs.bar,3)))
+
+```
+
+```{r}
+#Comparing for mean of RSS and SRS
+mean(srs.data)
+mean(rss.data)
+
+#Comparing for variance of RSS and SRS
+var(c(srs.data))
+var(c(rss.data))
+
+#Comparing two plot
+hist(rss.data, prob=TRUE, 
+     ylim = c(0,3.5),
+     col = "tomato2", 
+     xlim = c(-0.7,0.7), 
+     xlab = "",
+     ylab = "",
+     main = "Comparing for RSS and SRS")
+hist(srs.data,prob=TRUE, add=TRUE, col=rgb(0,1,0,0.5), xlab = "")
+lines(density(srs.data), col="black", lwd=2)
+lines(density(rss.data), col="blue1", lwd=2)
+abline(v=mean(srs.data),col = "black")
+abline(v=mean(rss.data),col = "blue1")
+```
+From above steps, the expexted value of $\bar{X}$ approximately equal to zero under the sampling mechanism is repeated 1000 times whether RSS or SRS. Thus, we say that $\bar{X}$ and $\bar{X}^*$ both are an unbiased estimator of the population mean $\mu$. 
+
+Simultaneously, the histgram of SRS is wider and higher than histgram of RSS after repeating 1000 times. Also, the variance of RSS is less than SRS. Thus, it also express that RSS makes samples we are selected more efficient that SRS.
+
+Next, we want to compare for the histgram of Rss in different set size.
+```{r}
+#Comparing for RSS in different set size (k=2,3,5,6)
+set.seed(2018)
+rss.sample<-function(cycle.size, set.size, rgen=runif,...)
+{
+  x<-matrix(NA,cycle.size,set.size)
+  for(i in 1:cycle.size){
+    for(j in 1:set.size){
+      y<-rgen(n=set.size,...)
+      y<-sort(y)
+      x[i,j]<-y[j]
+    }
+  }
+  return(x)
+} 
+
+sim.dist<-function(cycle.size, set.size, n.sim=1000, gen=runif,...)
+{
+  Xbar.RSS<-matrix(NA,10,100)
+  for(r in 1:n.sim){
+    y<-rss.sample(cycle.size, set.size, rgen=gen,...)
+    Xbar.RSS[r]<-mean(y)
+  }
+  return(Xbar.RSS)
+}
+rss.data1<-sim.dist(15,2,n.sim=1000, gen=rnorm,mean=0,sd=1)
+rss.data2<-sim.dist(10,3,n.sim=1000, gen=rnorm,mean=0,sd=1)
+rss.data3<-sim.dist(6,5,n.sim=1000, gen=rnorm,mean=0,sd=1)
+rss.data4<-sim.dist(5,6,n.sim=1000, gen=rnorm,mean=0,sd=1)
+
+par(mfrow=c(2,2))
+
+hist(rss.data1, 
+     probability = TRUE, 
+     main = "set size k=2",
+     xlab = "",
+     ylab = "",
+     xlim = c(-0.5,0.4),
+     ylim = c(0,4.0))
+lines(density(rss.data1),lwd=2,col="red")
+Xrss.bar<-mean(rss.data1)
+abline(v=Xrss.bar,col='blue')
+
+hist(rss.data2, 
+     probability = TRUE, 
+     main = "set size k=3",
+     xlab = "",
+     ylab = "",
+     xlim = c(-0.5,0.4),
+     ylim = c(0,4.0))
+lines(density(rss.data2),lwd=2,col="red")
+Xrss.bar<-mean(rss.data2)
+abline(v=Xrss.bar,col='blue')
+
+hist(rss.data3, 
+     probability = TRUE, 
+     main = "set size k=5",
+     xlab = "",
+     ylab = "",
+     xlim = c(-0.5,0.4),
+     ylim = c(0,4.0))
+lines(density(rss.data3),lwd=2,col="red")
+Xrss.bar<-mean(rss.data3)
+abline(v=Xrss.bar,col='blue')
+
+hist(rss.data4, 
+     probability = TRUE, 
+     main = "set size k=6",
+     xlab = "",
+     ylab = "",
+     xlim = c(-0.5,0.4),
+     ylim = c(0,4.0))
+lines(density(rss.data4),lwd=2,col="red")
+Xrss.bar<-mean(rss.data4)
+abline(v=Xrss.bar,col='blue')
+```
+
+# 5. Example and application of RSS
+
+As the first example, our population is the Iran wheat yield data set for 2005 which is reported as the result of the annual census conducted by the Iranian Ministry of Agriculture(IMA) in 2005, see @Unbiased_ratio_estimator_2012. The data set contains the information of the wheat yield and the total acreage of land which is planted in whear for 304 cities in 31 provinces of Iran in 2005.
+
+```{r}
+library(readxl)
+data<-read_excel("E:/dropbox/Dropbox/Summer Research---Jingyu/iwt84.xls")
+tolid<-data.frame(data[,1])
+var(tolid)
+hist(tolid[,1],prob=TRUE, main="Histogram of Y")
+summary(tolid)
+
+sathekesht<-data.frame(data[,2])
+var(sathekesht)
+summary(sathekesht)
+
+#plot(Sathekesht,Tolid,main="Scatterplot",xlab="X", ylab="Y")
+
+```
+
+
+```{r}
+#For Perfect Ranking, we use Y to estimate
+RSS.sample<-replicate(1000, {
+  x<-matrix(NA,cycle.size,set.size)
+  for(i in 1:cycle.size){
+    for(j in 1:set.size){
+      y<-sample(tolid[,],set.size,replace=T)
+      y<-sort(y)
+      x[i,j]<-y[j]
+    }}
+  return(x)})
+XRSSbar<-mean(RSS.sample)
+XRSSbar
+w=c(RSS.sample)
+var(w)
+```
+
+```{r}
+#For Improfect Ranking, we use X to estimate
+RSS.sample<-replicate(1000, {x<-matrix(NA,cycle.size,set.size)
+  for(i in 1:cycle.size){
+    for(j in 1:set.size){
+      y<-sample(sathekesht[,],set.size,replace=T)
+      y<-sort(y)
+      x[i,j]<-y[j]
+    }}
+  return(x)})
+XRSSbar<-mean(RSS.sample)
+XRSSbar
+w=c(RSS.sample)
+var(w)
+```
+
+
+# 6. The Difficulties of RSS
+
+Certainly, it does not always bring the advantages, there are other issues could happen and be considered in the survey. 
+
+The issue is about choosing value of k. The larger the value of k is, the more mistake we probably meet in the rankings later. Thus, the choosing of k value, the set size, is the most critical thing when using Ranked Set Sampling. Modelling the probabilities of the imperfect judgement rankings is one way to choose the value of size k, and how to evaluate the k value effect on RSS procedure is also necessary.Moreover, the unbalanced ranked set samples will be considered when the judgement order statistics is hard to operate for estimation in a cycle and the first application is provided by @Imperfect_judgement_rankings_1994.
+
+The Balanced Ranked Set Sampling is used for data collection in most conditions, but it is not fit for all of situation. From Table 1, $X_{[1]1}...X_{[1]m}$ is collected for the first judgement order statistics and $X_{[k]1}...X_{[k]m}$ is the kth judgement order statistics, this is the Balanced RSS. Now, different number of observations could be selected and analysis for each judgement order statistics such that the Unbalanced ranked set samples. For examples, we want to make inference for the median of a symmetric unimodel population. the unbalances RSS will be used to get the judgement median $X_{[(k+1)/2]}$. However, the balanced RSS is still used for estimation of the variance of population. 
+
+# 7. Ratio Esimation
+
+In this section, there is a new technique to get estimator which measure the population mean. This eatimator makes use of auxiliary information from population and put it with study variable together, denoted by ratio estimator. Usually, we use ratio estimator do the measurement under the following situation. There is a knowm variable have strong correlation with stuay variable in the population. Then, the sample of this known variable could make the ratio in the estimation as auxiliary variable. 
+
+Now, consider the study variable $Y$ and auxiliary variable $X$ are selected from population as two samples, and obtain the sample means are $\bar y$ and $\bar x$, respectively. Thus, the traditional ratio estimator for the population mean $\bar Y$ of study variable $y$ is 
+$$ \bar y_{r}=\frac{\bar y}{\bar x}\bar X =\hat R\bar X$$
+where $\bar X$ is population mean of auxiliary variable $x$ is known. 
+
+Next, we want to find the Mean square error (MSE) of the traditional ratio estimator. 
+
+Recall the definition of MSE from @statistical_inference_2002, the mean squared error (MSE) of an estimator $W$ of a parameter $\theta$ is the function of $\theta$ defined by $E_{\theta}(W-\theta)^2$. Notice that the MSE neasures the average squared difference between the estimator $W$ and the parameter $\theta$, and express the measurement of performance for a point estimator. 
+
+Thus, MSE of the traditional ratio estimator is given by @Ratio_estimator_2007:
+$$ MSE(\bar y_{r}) \approxeq \gamma(R^2S_{x}^2-2RS_{yx}+S_{y}^2)$$
+where $\gamma = \frac{1}{n}$, and $n$ is the sample size; $R = \frac{\bar Y}{\bar X}$ is the population ratio; $S_{x}^2$ and $S_{y}^2$ is the population variance od auxiliary variable and study variable, respectively. $S_{yx}$ is the population covariance between auxiliary variable and study variable. 
+
+Meanwhile, the ratio estimator and mean squared error (MSE) could be expressed in the simple random sampling (SRS).
+$$\bar y_{k}=k\frac{\bar y}{\bar x}\bar X =\hat R_{k}\bar X$$
+and 
+
+$$
+\begin{aligned}
+MSE(\bar y_{k}) &\approxeq \gamma(R^2S_{x}^2-2RkS_{yx}+k^2S_{y}^2)+\bar Y^2(k-1)^2\\
+&=\bar Y^2[\gamma(C_{x}^2-2k\rho C_{x}C_{y}+k^2C_{y}^2)+(k-1)^2]
+\end{aligned}
+$$
+
+To find form of $k$, we make the MSE minimum. 
+
+$$
+\begin{aligned}
+\frac{\partial MSE(\bar y_{k})}{\partial k}=0 &\implies -2\gamma\bar Y^2\rho C_{y}C_{x}+2kC_{y}^2\gamma\bar Y^2+2(k-1)\bar Y^2=0\\
+&\implies k(\gamma C_{y}^2+1)= 1+\gamma \rho C_{y}C_{x}\\
+&\implies k=\frac{1+\gamma \rho C_{y}C_{x}}{\gamma C_{y}^2+1}
+\end{aligned}
+$$
+where $C_{x}$, $C_{y}$ are the population coefficients of variation of auciliary variable and study variable, respectively.
+
+Also, the variance of ratio estimator in SRS is given by:
+
+$$ Var(\bar y_{k})=\frac{1-f}{n}[\frac{\sum_{i=1}^N(y_{i}-RX_{i})}{N-1}]$$
+where $f=\frac{n}{N}$, $n$ is sample size and $N$ is population size. 
+
+After comparing $MSE(\bar y_{k})$ and $MSE(\bar y_{r})$, the ratio estimator $\bar y_{k}$ in SRS is always more efficient than the traditional ratio estimator, $\bar y{r}$. More detail will be shown in the next section by using R code. 
+
+To show the ratio estimator is more efficiency, assume that $\bar y$ is mean of samples which are seclected from population by SRS. The variance of the ratio estimator is smaller than regular estimator, that mean the ratio estimator is more useful and more precise for measurement, which is expressed by @sampling_technique_1977 and @lecture_notes_in_sampling.
+
+**Theorem 7.1:** In large samples, with simple random sampling, the ratio estimate $\hat Y_{R}$ has samller variance than the estimate $\hat Y = N\bar y$ obbtian by simple expansion, if 
+
+$$ \rho > \frac{1}{2}(\frac{S_{x}}{\bar X})/(\frac{S_{y}}{\bar Y})=\frac{coefficient\ of\ variation\ of\ x_{i}}{2(coefficient\ of\ variation\ of\ y_{i})}$$
+Proof: For variance of $\hat Y$ we have, 
+
+$$Var(\hat Y)=\frac{N^2(1-f)}{n}S_{y}^2$$
+For variance of the ratio estimator we have, 
+
+$$Var(\hat Y_{R})=\frac{N^2(1-f)}{n}(S_{y}^2+R^2S_{x}^2-2R\rho S_{y}S_{x})$$
+Hence the ratio estimator is samller is 
+
+$$
+\begin{aligned}
+S_{y}^2+R^2S_{x}^2-2R\rho S_{y}S_{x} &< S_{y}^2\\
+RS_{x}^2-2\rho S_{y}S_{x} &< 0\\
+\implies \rho < \frac{1}{2}(\frac{S_{x}}{\bar X})/(\frac{S_{y}}{\bar Y})=\frac{1}{2}\frac{cv(x)}{cv(y)}
+\end{aligned}
+$$
+
+Even though the ratio estimator is more efficiency, it is a biased estimator. The bias of ratio estimator is given by
+
+$$\hat R-R = \frac{\bar y}{\bar x}-R=\frac{\bar y-R\bar x}{\bar x}$$
+Using Taylor's series, 
+
+$$\frac{1}{\bar x}=\frac{1}{\bar X +(\bar x-\bar X)}=\frac{1}{\bar X}(1+\frac{\bar x-\bar X}{\bar X})^{-1} \approxeq \frac{1}{\bar X}(1-\frac{\bar x-\bar X}{\bar X})$$
+So, 
+
+$$\hat R-R \approxeq \frac{\bar y-R\bar x}{\bar X}(1-\frac{\bar x-\bar X}{\bar X})$$
+Thus, 
+
+$$
+\begin{aligned}
+E(\hat R-R) &\approxeq E(\frac{\bar y-R\bar x}{\bar X}-\frac{\bar y(\bar x-\bar X)-R\bar x(\bar x-\bar X)}{\bar X^2})\\
+&=0-\frac{E(\bar y(\bar x-\bar X))-RE(\bar x(\bar x-\bar X))}{\bar X^2}\\
+&=\frac{1-f}{n\bar x^2}(RS_{x^2}-\rho S_{y}S_{x})
+\end{aligned}
+$$
+where 
+
+$$E(\bar y-R\bar x)=\bar Y-R\bar X =0$$
+$$E(\bar y(\bar x-\bar X))=E((\bar y-\bar Y)(\bar x-\bar X))=\frac{1-f}{n}\rho S_{y}S_{x}$$
+$$E(\bar x(\bar x-\bar X))=E(\bar x-\bar X)^2=\frac{1-f}{n}S_{x}^2$$
+
+The ratio estimator is also used for many situation. According to the description of @sampling_technique_1977, we use ratio estiamtion to measure the number of inhabitants of 196 large cities. There are 49 cities which are selected from population by using simple random sampling. Also, the number of inhabitants in 1920 is known as $X$, the auxiliary variable. We want to know the total number os inhabitants of cities in 1930, denoted by $y$, the study variable. By using the ratio estimation, the ratio could by obtained from $\frac{\bar y}{\bar x}$, where $\bar y$ and $\bar x$ are sample mean of the number of inhabitants in 1930 and 1920, respectively. Hence, we could get the estimated value of total number of inhabitants in 1930. 
+
+# 8. Ratio Estimator for RSS
+
+@Ratio_estimator_2007 indicated that ratio estimator could be get by using RSS technique. As previous contents , it shows how to get samples by RSS. If we select ramdom samples from $k^2$ elements and repeat this behavior $m$ times, then the samples are totally $mk$ elements after this procedure. Also, the ranking is used for each member of single set, and ranked on the characteristic of $y$ and $x$, study variable and auxiliary variable.
+
+For auxiliary variable $x$, the eatimator of the popularion ratio using RSS is defined by @estimation_of_ratio_1996, 
+
+$$\hat R_{RSS} = \frac{\bar y_{[n]}}{\bar x_{(n)}}$$
+where $\bar y_{[n]}=\frac{1}{n}\sum_{i=1}^ny_{[i]}$ and $\bar x_{(n)}=\frac{1}{n}\sum_{i=1}^n x_{(i)}$; $y_{[i]}$ is $i^{th}$ judgement ordering in the $i^{th}$ setfor the study variable and $x_{(i)}$ is $i^{th}$ order statistic in the $i^{th}$ set for the auxilisry variable. 
+
+Hence, the estimator is used for population total and mean, the $\bar y_{rRSS}$ could be denoted by, 
+
+$$\bar y_{rRSS} = \frac{\bar y_{[n]}}{\bar x_{(n)}}\bar X$$
+Recall the equation of $\bar y_{k}$, then
+
+$$\bar y_{kRSS}= k \frac{\bar y_{[n]}}{\bar x_{(n)}}\bar X= \hat R_{kRSS} \bar X$$
+
+The MSE of this estimator is, 
+
+$$MSE(\bar y_{rRSS}) \approxeq \frac{1}{mk}(S_{y}^2 - 2RS_{yx}+ R^2S_{x}^2)-\frac{1}{k^2m}(\sum_{i=1}^k\tau_{y[i]}^2 -2R\sum_{i=1}^k\tau_{yx(i)} +R^2\sum_{i=1}^k\tau_{x(i)}^2)$$
+
+where $\tau_{x(i)}= \mu_{x(i)}-\bar X$, $\tau_{y[i]}= \mu_{y[i]}-\bar Y$ and $\tau_{yx(i)}= (\mu_{y[i]}-\bar Y)(\mu_{x(i)}-\bar X)$. Also, the $\tau_{x(i)}$ and $\tau_{y[i]}$ are order statistics for their distribution and it is described in @order_statistics_1993.
+
+By using $\hat R_{kRSS}$, the MSE of $\bar y_{kRSS}$ is given by $MSE(\bar y_{kRSS}) = \bar X^2 MSE(\hat R_{kRSS})$. We need to find the equation of $MSE(\hat R_{kRSS})$:
+
+$$
+\begin{aligned}
+MSE(\hat R_{kRSS}) &=E(\hat R_{kRSS}-R)^2 = E(k \frac{\bar y_{[n]}}{\bar x_{(n)}}-R)^2\\
+&=E(k\frac{\bar y_{RSS}}{\bar x_{RSS}}-R)^2 = E(\frac{k\bar y_{RSS}-R\bar x_{RSS}}{\bar x_{RSS}})^2
+\end{aligned}
+$$
+
+By using Taylor Expansion and $\bar Y = R\bar X$,
+
+$$
+\begin{aligned}
+MSE(\hat R_{kRSS})&\approxeq \frac{1}{\bar X^2}E(k\bar y_{RSS}-R\bar x_{RSS})^2\\
+&\approxeq \frac{1}{\bar X^2}E[(k\bar y_{RSS}-\bar Y)-R(\bar x_{RSS}-\bar X)]^2 \\
+&= \frac{1}{\bar X^2}[E(k\bar y_{RSS}-\bar Y)^2-2R(k\bar y_{RSS}-\bar Y)(\bar x_{RSS}-\bar X))+R^2E(\bar x_{RSS}-\bar X))^2]\\
+&= \frac{1}{\bar X^2}\{k^2E(\bar y_{RSS}^2)+\bar Y^2-2k\bar YE(\bar y_{RSS})+R^2Var(\bar x_{RSS})\\
+& \hspace{0.5cm} -2R[kE(\bar y_{RSS}\bar x_{RSS})-\bar xkE(\bar y_{RSS})-\bar YE(\bar x_{RSS})-\bar YE(\bar x_{RSS})+\bar Y\bar X]\}\\
+\end{aligned}
+$$
+
+Because $E(\bar y_{RSS})=\bar Y$ and $E(\bar x_{RSS})=\bar X$, then we have,
+
+$$
+\begin{aligned}
+MSE(\hat R_{kRSS})&= \frac{1}{\bar X^2}\{k^2[Var(\bar y_{RSS})+\bar Y^2]+\bar Y^2(1-2k)+R^2Var(\bar x_{RSS})-2Rkcov(\bar y_{RSS}, \bar x_{RSS})\}\\
+&=  \frac{1}{\bar X^2}\{k^2Var(\bar y_{RSS})+\bar Y^2(k-1)^2+R^2Var(\bar x_{RSS})-2Rkcov(\bar y_{RSS}, \bar x_{RSS})\}
+\end{aligned}
+$$
+
+If we plug the $MSE(\hat R_{kRSS})$ into equation,
+
+$$MSE(\bar y_{kRSS})\approxeq k^2Var(\bar y_{RSS})+\bar Y^2(k-1)^2+R^2Var(\bar x_{RSS})-2Rkcov(\bar y_{RSS}, \bar x_{RSS})$$
+
+where $Var(\bar y_{RSS})= \frac {1}{mr}(S_{y}^2-\frac{1}{k}\sum_{i=1}^m\tau_{y[i]}^2)$, $Var(\bar x_{RSS})= \frac {1}{mr}(S_{x}^2-\frac{1}{m}\sum_{i=1}^k\tau_{x(i)}^2)$ and $cov(\bar y_{RSS}, \bar x_{RSS})= \frac {1}{mr}(S_{yx}-\frac{1}{m}\sum_{i=1}^k\tau_{yx(i)})$. Note that the sample variance $S^2 = \frac{N}{N-1}\sigma^2 \approxeq \sigma^2$.
+
+Thus, 
+
+$$
+\begin{aligned}
+MSE(\bar y_{kRSS})&\approxeq \frac{1}{mr}(k^2S_{y}^2-2RkS_{yx}+R^2S_{x}^2)+\bar Y^2(k-1)^2-\frac{1}{m^2r}\\
+& \hspace{0.5cm} \times(k^2\sum_{i=1}^m\tau_{y[i]}^2-2Rk\sum_{i=1}^m\tau_{yx(i)}+R^2\sum_{i=1}^m\tau_{x(i)}^2)\\
+&= MSE(\bar y_{k})-\frac{1}{m^2r}\sum_{i=1}^m(k\tau _{y[i]}-R\tau_{x(i)})^2\\
+&= MSE(\bar y_{k})- A
+\end{aligned}
+$$
+
+where $A = \frac{1}{k^2m}\sum_{i=1}^k(k\tau _{y[i]}-R\tau_{x(i)})^2$. It shows that the MSE of $\bar y_{kRSS}$ is samller than the MSE of $\bar y_{k}$, and $A$ is alwanys a non-negtive value. That means the ratio estimator by RSS is more efficient tnan the previous ratio estimator, $\bar y_{k}$.
+
+Simultaneously, we could get the optimal value of $k$ to minimize MSE of $\bar y_{kRSS}$ as before, 
+
+$$
+\begin{aligned}
+\frac{\partial MSE(\bar y_{kRSS})}{\partial k}=0 &\implies k(\frac{1}{mr}S_{y}^2+k\bar Y^2-\frac{1}{m^2r}\sum_{i=1}^m\tau _{y[i]}^2)= \frac{1}{mr}S_{yx}+\bar Y^2-\frac{1}{m^2r}R\sum_{i=1}^m\tau _{yx(i)}\\
+& \implies k^*=\frac{1+\gamma \rho C_{y}C_{x}-W_{yx(i)}}{1+\gamma C_{y}^2-W_{y[i]}^2}
+\end{aligned}
+$$
+
+where $\gamma = \frac{1}{n}= \frac{1}{mr}$, $C_{y}=\frac{S_{y}}{\bar Y}$, $C_{x}=\frac{S_{x}}{\bar X}$, $W_{y[i]}^2= \frac{1}{m^2r\bar y^2}\sum_{i=1}^m\tau _{y[i]}^2$ and $W_{yx(i)}= \frac{1}{m^2r\bar x\bar y}\sum_{i=1}^m\tau _{yx(i)}$.
+
+# 9. R code for Ratio Estimation
+
+The MUSIC dataset we used includes about 5137 music files in the author's music library. The name and description of variables are given as following: 
+
+SIZE: the total size of the music file in bytes\newline
+TIME: the duration of the song in seconds\newline
+BRATE: the encoding bit rate in kilobytes/second\newline
+CODEC: the codec used for encoding\newline
+PLAYS: the total number of plays
+
+```{r}
+load('E:/dropbox/Dropbox/Summer Research---Jingyu/MUSIC.rda')
+plot(MUSIC[,1],MUSIC[,2],ylab="Time",xlab="Size")
+
+#Traditional ratio eatimator
+#Note that Y, time, is study variable and X, size, is auxiliary variable
+Xbar<-mean(MUSIC[,1])
+Ybar<-mean(MUSIC[,2])
+Ybar
+
+n=100 #sample size
+
+x<-sample(MUSIC[,1],n,replace = T)
+y<-sample(MUSIC[,2],n,replace = T)
+
+xbar<-mean(x)
+ybar<-mean(y)
+ratiohat<-ybar/xbar
+
+ybarr<-ratiohat*Xbar
+ybarr
+
+#Ratio estimator in SRS
+gamma=1/n
+rho=cor(MUSIC[,1],MUSIC[,2])
+
+Cx=sqrt(var(MUSIC[,1]))/Xbar
+Cy=sqrt(var(MUSIC[,2]))/Ybar
+
+k=(1+gamma*rho*Cy*Cx)/(1+gamma*(Cy^2))
+
+ybark=k*ratiohat*Xbar
+ybark
+
+#Comparing for the mean for traditional ratio estimators and ratio estimator in SRS
+Ybar-ybarr
+Ybar-ybark
+```
+
+In this case, we use SIZE as auxiliary variable because SIZE shows a positive correlation with TIME. After calculation of two ratio estimators, the value of $\bar y_{k}$ is different from the actual population mean, which is smaller that the difference of $\bar y_{r}$. That means the ratio estimator in SRS is more efficient for classic ratio estimator. 
+
+# 10. Different estimators using auxiliary information
+
+In the probability sampling, the reasonable using of auxiliary inforation could decrease the variance of estimators of population parameters. in the following, let's talk about different estimator to estimate parameter using simple random sampling. 
+
+## 10.1 Estimation of population mean
+
+### Ratio Estimator
+
+The ratio estimator make use of auxiliary variable and studt variable together, and auxiliary variable usually have high correlation wirh study variable. Consider the known population mean $\bar X$ for auxiliary variable, then ratio estimator of population mean $\bar Y$ is 
+
+$$\bar y_{R} = (\frac{\bar y}{\bar x})\bar X = \bar y(\frac{\bar X}{\bar x})$$
+
+Next, there are several theorems of ratio estimator to help to knowm more information about ratio estimator. 
+
+**Theorem 10.1.1**: *The bias in the ratio estimator $\bar y_{R}$ of the population mean $\bar Y$, to the first order of approximation, is*
+
+$$B(\bar y_{R})= (\frac{1-f}{n})\bar Y[C_{x}^2-\rho_{xy}C_{x}C_{y}]$$
+
+Proof: $\bar y_{R}$ could be writen by $\epsilon_{0}$ and $\epsilon_{1}$, then 
+$$
+\begin{aligned}
+\bar y_{R} &= \bar y(\frac{\bar X}{\bar x})= \bar Y \frac{\bar y+\bar Y- \bar Y}{\bar Y}(\frac{\bar x+\bar X- \bar X}{\bar X})^{-1}\\
+&= \bar Y(1+ \frac{\bar y- \bar Y}{\bar Y})(1+ \frac{\bar x- \bar X}{\bar X})^{-1}\\
+&= \bar Y(1+ \epsilon_{0})(1+\epsilon_{1})^{-1}  \  where \ \epsilon_{0} = \frac{\bar y- \bar Y}{\bar Y} and \ \epsilon_{1}=\frac{\bar x- \bar X}{\bar X}\\
+&= \bar Y(1+ \epsilon_{0})(1-\epsilon_{1}+\epsilon_{1}^2+ O(\epsilon_{1})) \space by \ using\  binomial \ series\\
+&= \bar Y(1-\epsilon_{1}+\epsilon_{0}+\epsilon_{1}^2+O(\epsilon_{1})-\epsilon_{1}\epsilon_{0}+\epsilon_{1}^2\epsilon_{0}+\epsilon_{0}O(\epsilon_{1}))\\
+&= \bar Y(1-\epsilon_{1}+\epsilon_{0}+\epsilon_{1}^2-\epsilon_{1}\epsilon_{0}+O(\epsilon_{1}))
+\end{aligned}
+$$
+
+Note that $O(\epsilon_{1})$ denote the behavior of $\epsilon_{1}$, which is the higher order terms of $\epsilon_{1}$. Also, we assume $|\epsilon_{1}| < 1$ because binomial series work if $|\epsilon_{1}|< 1$. Then, the $O(\epsilon_{1})$ will be ignored because the terms in $O(\epsilon_{1})$ are very small. Then, the expected value of $\bar y_{R}$ is
+
+$$
+\begin{aligned}
+E(\bar y_{R}) &= E[\bar Y(1-\epsilon_{1}+\epsilon_{0}+\epsilon_{1}^2-\epsilon_{1}\epsilon_{0})]\\
+&= \bar Y E(1-\epsilon_{1}+\epsilon_{0}+\epsilon_{1}^2-\epsilon_{1}\epsilon_{0})\\
+&= \bar Y[1-E(\epsilon_{1})+E(\epsilon_{0})+E(\epsilon_{1}^2)-E(\epsilon_{1}\epsilon_{0})]
+\end{aligned}
+$$
+
+Since, $$E(\epsilon_{1})= E(\frac{\bar y- \bar Y}{\bar Y})= \frac{E(\bar y)-\bar Y}{\bar Y}=0$$
+$$E(\epsilon_{0})= E(\frac{\bar x- \bar X}{\bar X})= 0$$.
+
+$$
+\begin{aligned}
+E(\epsilon_{1}^2)&= E[(\frac{\bar x- \bar X}{\bar X})^2]= \frac{1}{\bar X^2} Var(\bar x)= \frac{1}{\bar X^2}\frac{S_{x}^2}{n}= \frac{1}{n}C_{x}^2\\
+&= (\frac{1}{n}- \frac{1}{N})C_{x}^2 = (\frac{1-f}{n})C_{x}^2
+\end{aligned}
+$$
+
+Note that in the ecpected value of $\epsilon_{1}^2$, $C_{x}= \frac{S_{x}}{\bar X}$, $f= \frac{n}{N}$ and $N$ is population size. When the population size goes to infinity, $\frac{1}{N}$ will be zero. 
+
+$$
+\begin{aligned}
+E(\epsilon_{0}\epsilon_{1})&= E(\frac{\bar x- \bar X}{\bar X}.\frac{\bar y- \bar Y}{\bar Y})= \frac{1}{\bar X \bar Y}E[(\bar y- \bar Y)(\bar x- \bar X)]=  \frac{1}{\bar X \bar Y}\frac{1}{n}S_{xy}\\
+&= \frac{1}{n}\frac{\rho S_{x}S_{y}}{\bar X \bar Y}= \frac{1}{n}\rho_{xy} C_{x}C_{y} \ where\ C_{y}= \frac{S_{y}}{\bar Y}\\
+&= \frac{1-f}{n}\rho_{xy} C_{x}C_{y}
+\end{aligned}
+$$
+
+Therefore, $E(\bar y_{R})= \bar Y[1+(\frac{1-f}{n})\{C_{x}^2- \rho_{xy}C_{x}C_{y}\}]$
+Then, $$Bias(\bar y_{R})= E(\bar y_{R}- \bar Y)= E(\bar y_{R})-\bar Y =  \bar Y(\frac{1-f}{n})[C_{x}^2- \rho_{xy}C_{x}C_{y}]$$
+
+**Theorem 10.1.2**: *The mean squared error of the ratio estimator $\bar y_{R}$ of the population mean $\bar Y$, to the first order of approcimation, is given by*
+
+$$MSE(\bar y_{R})=(\frac{1-f}{n})\bar Y^2[C_{y}^2+C_{x}^2-2\rho_{xy} C_{x}C_{y}]$$
+Proof: By using above proof from Theorem 10.1.1 and the definition of MSE, we have
+
+$$
+\begin{aligned}
+MSE(\bar y_{R})&= E[\bar y_{R}- \bar Y]^2 = E[\bar Y(1-\epsilon_{1}+\epsilon_{0}+\epsilon_{1}^2+O(\epsilon^2)-\epsilon_{1}\epsilon_{0})- \bar Y]^2\\
+&\approx \bar Y^2 E[\epsilon_{0}-\epsilon_{1}+\epsilon_{1}^2-\epsilon_{1}\epsilon_{0}]^2 \ ignoring \ the \ higner \ powers \ terms\\
+&= \bar Y^2 E[\epsilon_{1}^2+\epsilon_{0}^2+\epsilon_{1}^4+\epsilon_{0}^2\epsilon_{1}^2-2\epsilon_{1}\epsilon_{0}+4\epsilon_{0}\epsilon_{1}^2-2\epsilon_{1}^3-2\epsilon_{0}^2\epsilon_{1}-2\epsilon_{0}\epsilon_{1}^3]\\
+&\approx \bar Y^2 E[\epsilon_{1}^2+\epsilon_{0}^2-2\epsilon_{1}\epsilon_{0}]\\
+&= \bar Y^2 (\frac{1-f}{n})[C_{y}^2+C_{x}^2-2\rho_{xy} C_{x}C_{y}]
+\end{aligned}
+$$
+
+where $E(\epsilon_{1}^2)= (\frac{1-f}{n})C_{x}^2$, $E(\epsilon_{0}^2)= (\frac{1-f}{n})C_{y}^2$, and $E(\epsilon_{0}\epsilon_{1})=(\frac{1-f}{n})\rho_{xy} C_{x}C_{y}$. Therefore, we prove the $MSE$ of $\bar y_{R}$.
+
+**Theorem 10.1.3**: *An estimator of the mean squared error of the ratio estimator $\bar y_{R}$, to the first order of approximation, is *
+*$$\hat{MSE}(\bar y_{R})= (\frac{1-f}{n})[s_{y}^2+r^2s_{x}^2-2rs_{xy}]$$*
+*where $r= \frac{\bar y}{\bar x}$ denotes the estimator of ratio of two sample means.*
+
+Proof: Using sample statistics to replace the population parameters, then we have,
+
+$$
+\begin{aligned}
+MSE(\bar y_{R})&=(\frac{1-f}{n})\bar Y^2[\frac{s_{y}^2}{\bar Y^2}+\frac{s_{x}^2}{\bar X^2}-2\frac{S_{xy}}{\bar Y\bar X}]\\
+&= (\frac{1-f}{n})[s_{y}^2+R^2s_{x}^2-2Rs_{xy}] \ where \ R=\frac{\bar Y}{\bar X}
+\end{aligned}
+$$
+
+After replacement, $\hat{MSE}(\bar y_{R})= (\frac{1-f}{n})[s_{y}^2+r^2s_{x}^2-2rs_{xy}]$ and $r= \frac{\bar y}{\bar x}$. 
+
+**Theorem 10.1.4**: *Another form of the estimator of the mean squared error of the ratio estimator $\bar y_{R}$, to the first order of approximation, is*
+*$$\hat{MSE}(\bar y_{R})=(\frac{1-f}{n})\frac{1}{n-1}\sum_{i=1}^n[(y_{i}-\bar y)-r(x_{i}-\bar x)]^2$$*
+*where $r=\frac{\bar y}{\bar x}$ is the ratio of two sample means.*
+
+Proof: we use similar method for this proof, 
+
+$$
+\begin{aligned}
+MSE(\bar y_{R}) &= (\frac{1-f}{n})(\frac{1}{N-1})[(N-1)(s_{y}^2+R^2S_{x}^2-2Rs_{yx})]\\
+&= (\frac{1-f}{n})(\frac{1}{N-1})[(N-1)(s_{y}-Rs_{x})^2]\\
+&= (\frac{1-f}{n})(\frac{1}{N-1})\sum_{i=1}^N[(Y_{i}-\bar Y)-R(X_{i}-\bar X)]^2
+\end{aligned}
+$$
+by using definition of standard deviation of X and Y and sample statistics for $MSE$ of $\bar y_{R}$, we have
+
+$$\hat{MSE}(\bar y_{R})= (\frac{1-f}{n})(\frac{1}{n-1})\sum_{i=1}^n[y_{i}-\bar y)-r(x_{i}-\bar x)]^2$$.
+
+**Theorem 10.1.5**: *The ratio estimator $\bar y_{R}$ is more efficient than sample mean $\bar y$ if*
+*$$\rho_{xy}\frac{C_{y}}{C_{x}} > \frac{1}{2}$$*
+Proof: As proved in section, ratio estimation, we use the equation
+$$MSE(\bar y_{R}) < Var(\bar y)$$ 
+Then, we could get
+$\rho_{xy}>\frac{1}{2}\frac{S_{x}}{\bar X}/\frac{S_{y}}{\bar Y}= \frac{1}{2}\frac{C_{x}}{C_{y}}$. Therefore, $\rho_{xy}\frac{C_{y}}{C_{x}} > \frac{1}{2}$. 
+
+Note: Suppose that $C_{y}\approx C_{x}$, then is means the correlation coefficient $\rho_{xy}$ is in the range $(0.5, 1.0]$. Hence, we have the following theorem. 
+
+**Theorem 10.1.6**: *The ratio estimator $\bar y_{R}$ is more efficient than the sample mean $\bar y$ if $\rho_{xy}> 0.5$, for example, the correlation between $X$ and $Y$ is positive and high.*
+
+\vspace{1em}
+Next, let's talk about how to get the minimum sample size for the relative standard error(RSE). 
+
+**Theorem 10.1.7**: *The minimum sample size for the relative standard error(RSE) to be less than or equal to a fixed value $\phi$ is given by*
+$$n \geq [\frac{\phi^2\bar Y^2}{S_{y}^2+R^2S_{x}^2-2RS_{xy}}+\frac{1}{N}]^{-1}$$
+
+Proof: The relative standard error of the ratio estimator $\bar y_{R}$ is 
+$$
+\begin{aligned}
+RSE(\bar y_{R}) &= \sqrt{Var(\bar y_{R})/\bar Y^2}= \sqrt{(\frac{1}{n}-\frac{1}{N})(S_{y}^2+RS_{x}^2-2RS_{xy})/\bar Y^2}\\
+&= \sqrt{(\frac{1}{n}-\frac{1}{N})(C_{y}^2+C_{x}^2-2\rho_{xy}C_{x}C_{y})}
+\end{aligned}
+$$
+According to the description in the theorem, we have
+$$
+\begin{aligned}
+RSE(\bar y_{R}) \leq \phi & \implies \sqrt{(\frac{1}{n}-\frac{1}{N})(C_{y}^2+C_{x}^2-2\rho_{xy}C_{x}C_{y})} \leq \phi\\
+&\implies (\frac{1}{n}-\frac{1}{N})(C_{y}^2+C_{x}^2-2\rho_{xy}C_{x}C_{y})\leq \phi^2\\
+&\implies \frac{1}{n} \leq \frac{\phi^2}{C_{y}^2+C_{x}^2-2\rho_{xy}C_{x}C_{y}}+\frac{1}{N}\\
+& \implies n\geq[\frac{\phi^2}{C_{y}^2+C_{x}^2-2\rho_{xy}C_{x}C_{y}}+\frac{1}{N}]^{-1}
+\end{aligned}
+$$
+If replacing $C_{x}$ and $C_{y}$ use $\frac{S_{x}}{\bar X}$ and $\frac{S_{y}}{\bar Y}$, then we have $n \geq [\frac{\phi^2\bar Y^2}{S_{y}^2+R^2S_{x}^2-2RS_{xy}}+\frac{1}{N}]^{-1}$
+
+### Product Estimator
+
+Now, we consider another estimator for population mean $\bar Y$ which also use auxiliary variable $X$. The product estimator is 
+$$\bar y_{p}= \bar y(\frac{\bar x}{\bar X})$$
+
+Next, there are several theorems as the following for the product estimator. 
+
+**Theorem 10.2.1**: *The exact bias in the product estimator $\bar y_{p}$ of the population mean $\bar Y$ is given by*
+$$B(\bar y_{p})= (\frac{1-f}{n})\bar Y\rho_{xy}C_{y}C_{x}$$
+Proof: 
+$$
+\begin{aligned}
+E(\bar y_{p})&= E[\bar Y(1+\frac{\bar y-\bar Y}{\bar Y})(1+\frac{\bar x-\bar X}{\bar X})]\\
+&=E[\bar Y(1+\epsilon_{0})(1+\epsilon_{1})] = E[\bar Y(1+\epsilon_{0}+\epsilon_{1}+\epsilon_{0}\epsilon_{1})]\\
+&= \bar Y(1+E(\epsilon_{0})+E(\epsilon_{1})+E(\epsilon_{0}\epsilon_{1}))\\
+&= \bar Y +(\frac{1-f}{n})\bar Y\rho_{xy}C_{x}C_{y}\quad \text{ by using fomular in Section 10.1} 
+\end{aligned}
+$$
+Hence, the bias of $\bar Y_{p}$ is 
+$$B(\bar y_{p})= E(\bar y_{p})-\bar Y= (\frac{1-f}{n})\bar Y\rho_{xy}C_{x}C_{y}$$
+
+It is obviously to see that same method is used to prove this theorem, and the following theorems also use similar method of proof which shows in previous section. 
+
+**Theorem 10.2.2**: *The mean squared error of the product estimator $\bar y_{P}$ of the population mean $\bar Y$, to the first order of approcimation, is given by*
+
+$$MSE(\bar y_{P})=(\frac{1-f}{n})\bar Y^2[C_{y}^2+C_{x}^2+2\rho_{xy} C_{x}C_{y}]$$
+
+Proof: The same method with Theorem 10.1.2 is used in this proof, then we have
+
+$$
+\begin{aligned}
+MSE(\bar y_{p})&=E(\bar y_{p}-\bar Y)^2 = E(\bar Y(\epsilon_{0}+\epsilon_{1}+\epsilon_{0}\epsilon_{1}))^2\\
+&\approx \bar Y^2E(\epsilon_{0}^2+\epsilon_{1}^2+2\epsilon_{0}\epsilon_{1}) \space \text{using formular in section 10.1}\\
+&=\bar Y^2(\frac{1-f}{n})[C_{y}^2+C_{x}^2+2\rho_{xy} C_{x}C_{y}]
+\end{aligned}
+$$
+
+
+# 11. Summary
+
+To summarize, this report provides an overview of Ranked Set Sampling which is a data collection technique could make the samples more efficient in practic. It also includes the general procedure of RSS, the difference between of perfect and imperfect ranking and the balanced and unbalanced RSS. Next, the procedure shows how it works for perfect ranking in design and some properties and theorems are provided. The proofs explain that an unbiased estimator of the population mean and the variance of RSS is less than variance of SRS which means RSS is more precise than SRS (Simple Random Sampling). Codes for RSS and SRS is used for comparing two mechansiams. The difficlties for using RSS are presented and real examples and applications are provided after that. The descriptyion of ratio estimator and its code are given in the end of reprot.  
+
+\pagebreak
+
+# 12. Reference
