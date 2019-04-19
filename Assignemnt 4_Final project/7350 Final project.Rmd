@@ -1,0 +1,134 @@
+---
+title: "Stat 7350 Final Project Report"
+author: "Jingyu Wang 7701969"
+date: "April 19, 2019  9:00am"
+output: pdf_document
+header-includes: \usepackage{setspace}\onehalfspacing
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, warning=FALSE}
+library(tidyverse)
+library(here)
+here()
+```
+
+## Section I: Introduct the dataset and the questions that you will answer with your report
+
+### Introduction 
+
+Wine is one of the most common types of alcohols purchased to all countries of world. It is also a major export of Portugal which is a top ten wine exporting country in the world. In 2015, they exported 738 billion Euros worth of wine\cite{C2016}. Different types of wine products have varying properties which can affect the quality and flavour of wine. Also, producers need certificate of their products to sell their wine legally. Physiochemical tests is commonly used method for wine's certification, which includes measuring pH, density, alcohol levels etc., as well as human tests which relies on human experts to taste and evaluate the quality of the wine. Measurement data could help to figure out variables attected quality of wine in order to improve wine production. Usually, higher quality of wine has higher price in the marketing. 
+
+The motivation is that finding the variables affects the quality, then we can improve the qulaity of wine and set higher price. 
+
+The dataset in our study was obtained from the University of California Irvine, Machine Learing Repository. Dr. Paulo Cortez et al. who are from the University of Minho in Portugal studied and had paper such that Modeling wine preferences by data mining from physicochemical properties based on this data in 2009. There are two types of vinho verde wine, red wine and white wine, included in this dataset and wine vinho verde is unique product from the northwest region of Portugal. Data was collected by the official certification entity (CVRVV), which is an organization looking to improve the quality of vinho verde. 
+
+In the dataset, there are 1599 red wines samples and 4898 white wine samples. For each wine, it includes 11 relative variables and one respone variable(quality) and shows as following:
+
+\begin{itemize}
+\item Fixed acidity(g(tartaric acid)/dm3): a numeric vector
+
+\item Volatile acidity(g(acetic acid)/dm3): a numeric vector
+
+\item Citric acid(g/dm3): a numeric vector
+
+\item Residual sugar(g/dm3): a numeric vector
+
+\item Chlorides(g(sodium chloride)/dm3): a numeric vector
+
+\item Free sulfur dioxide(mg/dm3): a numeric vector
+
+\item Total sulfur dioxide(mg/dm3): a numeric vector
+
+\item Density(g/cm3): a numeric vector
+
+\item pH: a numeric vector
+
+\item Sulphates(g(potassium sulphate)/dm3): a numeric vector 
+
+\item Alcohol(vol$\%$): a numeric vector
+
+\item Quality: a factor with levels: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+\end{itemize}
+
+The question we are trying to solve is which kinds of variables really affects the quality wine as the important variables and how those variables affects the quality of wine together. 
+
+## Section 2: Analysis Methods
+
+In our study, the first thing we considered is how samples distributed in different levels of quality. The histogram shows the results with counting of both wine in different levels of quality. Secondly, the line chart was given to explaine how mean of each variable changes for different quality for both wines. Scatter polt and correlation show that there exist relationship between few variables for both wine. 
+
+Finally, principle component regression model was used to find which variables can be linearly combined and affect the reponse variable(quality) together. Few steps need to be completed in PCA. Firstly, VIF checking can ensure whether multicolinearity exists in our dataset. PCA also can be used to decorrelate the dataset, then principle component regression model can be fitted by all standardized PCs. At the end of this method, important PCs are kept and show the linear combination in each PC. Here, avova also used for checking whether there is significant difference between two models. 
+
+## Section 3: Results
+
+First thing after get the dataset is to see how many samples in each level of quality for both wine. The histogram displayed that in the Figure 1. 
+
+![Numbers for both wine in different quality level](Figures\Figure_1_hisg.pdf)
+
+From the histogram, red wine and white wine samples distributed in different quality levels. Red wine samples are distributed in the the level from 3 to 8. Most of samples shows in the quality 5,6 and 7. However, there are few samples in the level 9 for white wine. It looks like a normal distribution for both wine, the midiem quality have more samples and few samples fall into very low or very high levels of quality. 
+
+Next, the line chart displays the changing of mean for variables in different level of quality for red and white wine reperately as Figure 2 and Figure 3. 
+
+![Mean for different quality in each variable(red wine)](Figures\redwine2.pdf)
+
+![Mean for different quality in each variable(white wine)](Figures\whitewine2.pdf)
+
+From above both line chart, it is obviously to see that some varlables value is increasing with increasing of quality, such as citric acid and sulphates for red wine and pH for white wine. Some of them are decreasing when the quality is getting larger, such as volatile acidity in red wine and chlorides in white wine. However, this graph cannot show whether there are relationship between variables. 
+
+Thus, we also make scatter plot to see how the data looks like between variables for both wine and check whether there is relationship between them(The graphs shows in the supporting file, because it gives same information with correlation matrix). The correlation matrix for both wine gives the relationship between different variables as Figure 4 and Figure 5. 
+
+![Correlation between different variables(red wine)](Figures\rwine_cor.pdf)
+
+![Correlation between different variables(white wine)](Figures\wwine_cor.pdf)
+
+In red wine correlation figures, there is strong positive relationship between fixed acidity and density, as well as between fixed acidity and citric acid. However, pH have strong negative relationship with fixed acidity. In addition, the value which is between 0.6 and 0.79 express the strong relationship between compared variables in statistics\cite{C2019}. Also, in white wine, residual sugar and density have very strong positive relationship, and density and alcohol have very strong negative relationship. However, there is no relationship between free sulfur dioxide and pH, as well as between total sulfur dioxide and pH. 
+
+Now. we know that some of variables do have relationship between each other. Thus, the principle component analysis will be used to dicorrelate the data, which the one of the features of PCA. Firstly, variance inflation factors(VIF) value are calculated to ensure that multicolinearity exists in the both wine dataset, because scales of VIF are quite different, expecially white wine. For example, density have $28.23$ but sulphates only have $1.14$ for VIF. Covariance matrix is also checked after that, and shows that the scales of covariance are quite different. Thus, we ensure the multicolinearity for both wine and decide to use correlation matrix for the PCA at the sme time. 
+
+To do PCA, eigenvalues and eigenvectors are calculated by using correlation mateix. From the information of proportion of variation by each PC, 7 components and 8 components should be kept for red wine and white wine to express information of data, respectively. Also, standardized PCs was obtained by using correlation matrix times $z$, where $z = \frac{x-\bar x}{\sigma}$. Then, we have a new dataset with all standardized PCs and correlation checking shows there is no relationship between each other. Thus, this dataset was used to fit the principle components regession model. 
+
+For the red wine, there are 7 PCs(PC1-3,PC5 and PC7-9) are extremely significant(PC4 and PC10), two PCs are significant and two PCs are not significant. After reducing two not significant PCs, the model gave $0.3559$ for adjusted R-squared which did not change so much with that of full model($0.3561$). That means the nine components we kept was correct and did not lose much information of dataset. Also, we can check the importance in each variables from eigenvector matrix. For example, in PC1, it has fixed acidity($0.49$) citric acid($0.46$) and pH($-0.44$) which contrbutes for the first PC and fixed acidity and citric acid have positive effects and pH have oppsite effects. Free sulfur dioxide and total sulfur dioxide have improtant affect for second PC and alcohol ahve negative effects. The following table shows how each variable contributed in each PC we kept. 
+
+```{r, warning=FALSE}
+# All variables contribute for PCs in red wine
+read_csv(here("Assignemnt 4_Final project","Data","redwPC.csv"),
+         col_types = cols())
+```
+
+For white wine, there are 9 PCs(PC1-5 and PC 8-11) are extremely significant and two PCs are not significant. The summary of model gave $0.2801$ for adjusted R-squared which did not change so much with that of full model($0.2803$) after reducing that two PCs. Avova method was also use to compare to models and the p-value is $0.2116$, which means there is no significant difference between two models. Then, the importance in each variables from eigenvector matrix gave that residual sugar, total sulfur dioxide and density attibute the first PCs and alcohol attibute with opposite effects. Fixed acidity and pH attribute the eighth PC and residual sugar ahve opposite effects at the same time. Each variable contributed in each PC we kept display as below. 
+
+```{r, warning=FALSE}
+# All variables contribute for PCs in white wine
+read_csv(here("Assignemnt 4_Final project","Data","whitewPC.csv"),
+         col_types = cols())
+```
+
+### Limitation/Discussion
+
+When we obtain an multivariate dataset, the first thing we want to try is fitting the linear model. I also tried that, the linear regression model gave the variables which played important role in the data. However, in our case, there is multicolinearity exist and correlation between few variables. Thus, the regression model may not be accurate. This is the reason why we need to use principle component regression model. 
+
+Also, note that the quality as respone variable is ordinal, therefore the ordinal regression model(clm in R) may need to use and compare the different outcomes from general lieane model(lm in R). There are very similar result as the only difference is that pH is found to be significant in the linear regression model for red wine. White wine gives the exact same variables to be significant.
+
+## Section 4: Conclusion& Reflection
+
+In our study, some of 11 variables have relationshp and affect quality of wine together. There are 7 and 9 extremely significant components for red wine and white wine ,respectively. Also, for each componet, there are different variables contributed in different ways(positive or nigative). There, all of them will give the results for which kinds ot variables affect quality of wine together and how to affect it. 
+
+For this assignment, I know there is no missing data in our dataset. Also, it is a multivariable datset with one response variable. Before doing this assignmnt, I will fit the linear model directly when Got this kind of data. However, for now, I know multicolinearity may exist in this kind of dataset. Thus, the linear model fitting may not accurate. Also mention this point for the future student who want to use this dataset, the relationship between variables should be check first. Even the linear model fitting give nice result, the assumptions(independent between variables) are not satified, which means the result can be not correct. 
+
+
+\newpage
+
+\begin{thebibliography}{99}
+ 
+\bibitem[1]{C2016}
+State of the Vitiviniculture World Market. 2016. \textit{Organisation internation}. 
+
+\bibitem[2]{C2019}
+Peason's Correlation. 
+www.statstutor.ac.uk/resources/uploaded/pearsons.pdf
+
+\end{thebibliography}
+

@@ -16,8 +16,8 @@ library(MASS)
 ```
 
 ```{r,warning=FALSE}
-# here()
-bees<-read_csv(here("Assignment 3","cleaned_bees_columns_removed.csv"),
+ here()
+bees<-read_csv(here("Assignment 3","Data","cleaned_bees_columns_removed.csv"),
                col_types = cols())
 
 bees.rare.spe<-bees%>%filter(Species%in%c("sumptuosa","pumila","obliqua","nasonii","montivaga","mesillae","mendica","inurbana","cressonii"))

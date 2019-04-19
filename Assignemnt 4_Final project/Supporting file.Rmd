@@ -1,0 +1,436 @@
+---
+title: "Data Visualization Assignment 4 (Data Analysis)"
+author: "Jingyu Wang 7701969"
+date: "April 19, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Two most common wine, red and white wine, data are included with eleven variables which can affect the quality of both wine. We want to know which variables are most important and really affecr the quality of wine. 
+
+```{r, warning=FALSE}
+library(ggplot2)
+#library(GGally)
+library(tidyverse)
+library(here)
+library(corrplot)
+library(reshape2)
+library(car)
+library(Hmisc)
+```
+
+## Reading data
+
+```{r, warning=FALSE}
+#here()
+red_wine<-read_csv(here("Assignemnt 4_Final project","Data","red wine.csv"),
+                   col_types = cols())
+white_wine<-read_csv(here("Assignemnt 4_Final project","Data","white wine.csv"),
+                     col_types = cols())
+```
+
+###Combining white and red wine data and expressed by group. 
+
+```{r}
+# Group 1 is red wine and group 2 is white wine. 
+comb_wines<-rbind(red_wine,white_wine)
+group<-c(rep("red",times=1599),rep("white",times=4898))
+wines_new<-cbind(comb_wines,group)
+```
+
+
+### Reshape dataset for both wines
+
+```{r}
+# red wine
+red_wine_m<- melt(red_wine,id.vars='quality',
+                  measure.vars=c("fixed acidity","volatile acidity",
+                                 "citric acid","residual sugar","chlorides",
+                                 "free sulfur dioxide","total sulfur dioxide",
+                                 "density", "pH", "sulphates","alcohol"))
+
+
+# white wine
+white_wine_m<- melt(white_wine,id.vars='quality',
+                  measure.vars=c("fixed acidity","volatile acidity",
+                                 "citric acid","residual sugar","chlorides",
+                                 "free sulfur dioxide","total sulfur dioxide",
+                                 "density", "pH", "sulphates","alcohol"))
+
+```
+
+
+## Counting of both wine in different level of quality
+
+```{r}
+ggplot(wines_new, aes(quality, fill = group))+
+  geom_histogram(binwidth = 1,position = "dodge")+
+  ggtitle("Figure 1: Numbers for both wine in different level of quality", 
+          subtitle = "Red wine and white wine")
+```
+
+
+
+```{r}
+# com.dat<-rbind(red_wine_m,white_wine_m)
+# dim(com.dat)
+# group2<-c(rep("red",times=17589),rep("white",times=53878))
+# wines_new_m<-cbind(com.dat,group2)
+# 
+# t.w.m<-wines_new_m%>%
+#   filter(variable%in%c("fixed acidity","volatile acidity",
+#                                  "citric acid","residual sugar","chlorides",
+#                                  "free sulfur dioxide","total sulfur dioxide",
+#                                  "density", "pH", "sulphates","alcohol"))%>%
+#   group_by(quality,variable,group2)%>%
+#   summarise(Mean=mean(value))
+```
+
+```{r}
+# ggplot(t.r, mapping = aes(x=quality, y=Mean, fill = group2))+
+#   geom_point()+
+#   geom_line()+
+#   facet_wrap(~variable, scales = "free_y")
+```
+
+
+## Mean for different quality in each variable(red wine)
+
+```{r}
+t.r<-red_wine_m%>%
+  filter(variable%in%c("fixed acidity","volatile acidity",
+                                 "citric acid","residual sugar","chlorides",
+                                 "free sulfur dioxide","total sulfur dioxide",
+                                 "density", "pH", "sulphates","alcohol"))%>%
+  group_by(quality,variable)%>%
+  summarise(Mean=mean(value))
+
+
+ggplot(t.r, mapping = aes(x=quality, y=Mean, colour= variable))+
+  geom_point()+
+  geom_line()+
+  ggtitle("Mean for different quality in each variable", subtitle = "Red Wine")
+```
+
+
+```{r}
+ggplot(t.r, mapping = aes(x=quality, y=Mean))+
+  geom_point(colour = "#0033FF")+
+  geom_line(colour = "#0033FF")+
+  facet_wrap(~variable, scales = "free_y")
+```
+
+## Mean changing of each variable in different quality(white wine)
+
+```{r}
+t.w<-white_wine_m%>%
+  filter(variable%in%c("fixed acidity","volatile acidity",
+                                 "citric acid","residual sugar","chlorides",
+                                 "free sulfur dioxide","total sulfur dioxide",
+                                 "density", "pH", "sulphates","alcohol"))%>%
+  group_by(quality,variable)%>%
+  summarise(Mean=mean(value))
+
+ggplot(t.w, mapping = aes(x=quality, y=Mean, colour= variable))+
+  geom_point()+
+  geom_line()+
+  ggtitle("Mean for different quality in each variable", subtitle = "White Wine")
+```
+
+
+```{r}
+ggplot(t.w, mapping = aes(x=quality, y=Mean))+
+  geom_point(colour = "#0033FF")+
+  geom_line(colour = "#0033FF")+
+  facet_wrap(~variable, scales = "free_y")
+```
+
+
+## Multiple Regression
+
+### Red wine
+
+```{r}
+#red_wine$quality<-as.factor(red_wine$quality)
+model.red1<-lm(quality~`fixed acidity` + `volatile acidity` + 
+                `citric acid` + `residual sugar` + `chlorides` +
+                `free sulfur dioxide` + `total sulfur dioxide` +
+                `density` + `pH` + `sulphates`+ 
+                `alcohol`, data = red_wine)
+summary(model.red1)
+
+# step(model.red1, direction= "both")
+
+model.red2<-lm(quality ~ `volatile acidity` + `chlorides` + 
+                `free sulfur dioxide`+ `total sulfur dioxide` +
+                `pH`+ `sulphates`+ `alcohol`, data=red_wine)
+summary(model.red2)
+
+anova(model.red1,model.red2)
+```
+
+### White wine
+
+```{r}
+#white_wine$quality<-as.factor(white_wine$quality)
+model.white1<-lm(quality~`fixed acidity` + `volatile acidity` + 
+                `citric acid` + `residual sugar` + `chlorides` +
+                `free sulfur dioxide` + `total sulfur dioxide` +
+                `density` + `pH` + `sulphates`+ 
+                `alcohol`, data = white_wine)
+summary(model.white1)
+
+
+model.white2<-lm(quality ~ `fixed acidity` + `volatile acidity` +
+                   `residual sugar` + `free sulfur dioxide` + 
+                   `density` + `pH` + `sulphates` + `alcohol`,
+                 data=white_wine)
+summary(model.white2)
+
+anova(model.white1,model.white2)
+```
+
+
+## Scatter plot for multivariable
+
+```{r}
+pairs(red_wine[,1:11], main = "Scatter plot for variables of red wine")
+pairs(white_wine[,1:11],main = "Scatter plot for variables of white wine")
+
+# ggpairs(red_wine,columns =,c("fixed acidity","volatile acidity",
+#                             "citric acid","residual sugar","chlorides",
+#                                  "free sulfur dioxide","total sulfur dioxide",
+#                                  "density", "pH", "sulphates","alcohol"),
+#         lower = list(continuous = "points"),
+#         upper = list(continuous = "blank"),
+#         axisLabels = "none")
+```
+
+
+## Correlation and its plot
+
+```{r}
+varib_cor_R<-cor(red_wine[,1:11])
+corrplot(varib_cor_R,method="color",type="upper", 
+         addCoef.col = "black", tl.col="black", 
+         tl.srt=45,insig = "blank", diag=FALSE,
+         number.font = 6,number.cex = 0.75)
+
+varib_cor_W<-cor(white_wine[,1:11])
+corrplot(varib_cor_W,method="color",type="upper", 
+         addCoef.col = "black", tl.col="black", 
+         tl.srt=45,insig = "blank", diag=FALSE,
+         number.font = 6,number.cex = 0.75)
+```
+
+```{r}
+# cor.test(red_wine$`fixed acidity`,red_wine$density)
+# cor.test(red_wine$alcohol,red_wine$pH)
+# cor.test(red_wine$`volatile acidity`,red_wine$`residual sugar`)
+# 
+# ##assumption
+# shapiro.test(red_wine$alcohol)
+# shapiro.test(red_wine$pH)
+# ggqqplot(red_wine$pH, ylab = "pH")
+# ggqqplot(red_wine$alcohol, ylab = "alcohol")
+
+
+# library("ggpubr")
+# ggscatter(red_wine, x = "alcohol", y = "density", 
+#           add = "reg.line",cor.method = "pearson")
+```
+
+
+## Principal component Analysis
+
+### Checking the fitted regression model for multicolinearity (full model)
+
+```{r}
+vif(model.red1)
+vif(model.white1)
+```
+
+### Checking the fitted regression model for multicolinearity (reduced model)
+
+```{r}
+vif(model.red2)
+vif(model.white2)
+```
+
+Some values of variance inflation factors for both wines are quite large, so multicolinearity exists in the full model for red wine as well as the full and reduced model for white wine. Thus, our multiple regression results may not be accurate.
+
+### PCA for Red Wine
+
+To do principle component analysis, we need to calculate covariance of dataset firstly. 
+
+```{r}
+cov.red<-cov(red_wine[,1:11])
+cov.red
+```
+
+Because the scales of covariance for both wines are quite different, the correlation matrix should be used for principle component analysis in our case. 
+
+```{r}
+cor.red<-round(cor(red_wine[,1:11]),3)
+```
+
+We need to obtain the eigenvalues and eigenvectors of correlation matrix.
+
+```{r}
+eig.val.red<-eigen(cor.red)$values # Pick the eigenvalues from result
+round(eig.val.red,3)
+
+eig.vec.red<-eigen(cor.red)$vectors # Pick eigenvectors from result
+rownames(eig.vec.red)<-colnames(red_wine[,1:11])
+colnames(eig.vec.red)<-c("PC1","PC2","PC3","PC4","PC5","PC6",
+                         "PC7","PC8","PC9","PC10","PC11")
+round(eig.vec.red,2)
+```
+
+Principle component analysis helps us reduce variables which are not important in the model. The variables we kept which really affects the response variable. In our case, we are trying to keep those kinds of variables which affects the quality of wine and fit the linear model. Thus, the following method shows the number of components whih should be kept.
+
+```{r}
+plot(eig.val.red, type = "b", pch=19, xlab = "", ylab = "Variances")
+
+# Proportion of variation explained by each PCs
+round(eig.val.red/sum(eig.val.red),3)  
+cumsum(round(eig.val.red/sum(eig.val.red),3))
+```
+
+Also, we need to standardize all PCs as the explanatory variables.
+
+```{r}
+x<-red_wine[,1:11]
+x.mean<-apply(x, 2, mean)
+x.mean
+
+z<-x
+for (i in 1:11) {
+  z[,i]<-(x[,i]-x.mean[i])/sqrt(diag(cov.red)[i])
+}
+
+red.new<-x
+for (i in 1:11){ # number of pcs
+  for (j in 1:1599){
+    red.new[j,i]<-t(eig.vec.red[,i]) %*% t(z[j,])
+  }
+}
+
+# To check the correlation in the new dataset
+colnames(red.new) = c("PC1", "PC2", "PC3", "PC4","PC5",
+                    "PC6","PC7","PC8","PC9","PC10","PC11")
+round(cor(red.new),2)
+```
+
+#### Regression analysis with all standardized PCs
+
+```{r}
+dim(red.new)
+red.new.dat<-cbind(red_wine$quality,red.new)
+
+pc.model<-lm(red_wine$quality~PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11,
+             data=red.new.dat)
+summary(pc.model)
+
+pc.mode2<-lm(red_wine$quality~PC1+PC2+PC3+PC4+PC5+PC7+PC8+PC9+PC10,
+             data=red.new.dat)
+summary(pc.mode2)
+
+anova(pc.model,pc.mode2)
+```
+
+### PCA for White wine
+
+```{r}
+cov.white<-cov(white_wine[,1:11])
+cov.white
+
+cor.white<-round(cor(white_wine[,1:11]),3)
+eig.val.white<-eigen(cor.white)$values # Pick the eigenvalues from result
+round(eig.val.white,3)
+
+eig.vec.white<-eigen(cor.white)$vectors # Pick eigenvectors from result
+rownames(eig.vec.white)<-colnames(white_wine[,1:11])
+colnames(eig.vec.white)<-c("PC1","PC2","PC3","PC4","PC5","PC6",
+                         "PC7","PC8","PC9","PC10","PC11")
+round(eig.vec.white,2)
+
+plot(eig.val.white, type = "b", pch=19, xlab = "", ylab = "Variances")
+
+# Proportion of variation explained by each PCs
+round(eig.val.white/sum(eig.val.white),3)  
+cumsum(round(eig.val.white/sum(eig.val.white),3))
+
+x<-white_wine[,1:11]
+x.mean.w<-apply(x, 2, mean)
+x.mean.w
+
+# Standardize white wine data
+z<-x
+for (i in 1:11) {
+  z[,i]<-(x[,i]-x.mean.w[i])/sqrt(diag(cov.white)[i])
+}
+
+white.new<-x
+for (i in 1:11){ # number of pcs
+  for (j in 1:4898){
+    white.new[j,i]<-t(eig.vec.white[,i]) %*% t(z[j,])
+  }
+}
+
+# To check the correlation in the new dataset
+colnames(white.new) = c("PC1", "PC2", "PC3", "PC4","PC5",
+                    "PC6","PC7","PC8","PC9","PC10","PC11")
+round(cor(white.new),2)
+
+# Principle Component Regression
+white.new.dat<-cbind(white_wine$quality,white.new)
+
+pc.mode3<-lm(white_wine$quality~PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11,
+             data=white.new.dat)
+summary(pc.mode3)
+
+pc.mode4<-lm(white_wine$quality~PC1+PC2+PC3+PC4+PC5+PC8+PC9+PC10+PC11,
+             data=white.new.dat)
+summary(pc.mode4)
+
+anova(pc.mode3,pc.mode4)
+```
+
+
+## Plot for each variables in different quality
+
+```{r}
+# red_wine$`volatile acidity`<-log(red_wine$`volatile acidity`)
+# red_wine$`residual sugar`<-log(red_wine$`residual sugar`)
+# red_wine$chlorides<-log(red_wine$chlorides)
+# red_wine$`free sulfur dioxide`<-log(red_wine$`free sulfur dioxide`)
+# red_wine$`total sulfur dioxide`<-log(red_wine$`total sulfur dioxide`)
+# red_wine$sulphates<-log(red_wine$sulphates)
+# red_wine$alcohol<-log(red_wine$alcohol)
+# red_wine_m<- melt(red_wine,id.vars='quality', 
+#                   measure.vars=c("fixed acidity","volatile acidity",
+#                                  "citric acid","residual sugar","chlorides",
+#                                  "free sulfur dioxide","total sulfur dioxide",
+#                                  "density", "pH", "sulphates","alcohol"))
+
+red_wine_m<- melt(red_wine,id.vars='quality', 
+                  measure.vars=c("volatile acidity","chlorides",
+                                 "free sulfur dioxide","total sulfur dioxide",
+                                 "pH", "sulphates","alcohol"))
+red_wine_m[,3]<-log(red_wine_m[,3])
+
+
+ggplot(red_wine_m,aes(x=variable, y=value)) + 
+  geom_boxplot()+
+  facet_wrap(~quality)+
+  stat_summary(fun.y = "mean", geom = "point", 
+               size = 2, color = "red", shape = 15)+
+  ggtitle("Box plot for significant variables in quality for red wine")+
+  theme(axis.text.x=element_text(angle = -45, hjust = 0))
+```
+
+
