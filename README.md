@@ -1,1 +1,1 @@
-# Stat-7350-class
+# Stat-7350-DATA Visualization
